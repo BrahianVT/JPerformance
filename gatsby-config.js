@@ -1,14 +1,14 @@
 module.exports = {
   siteMetadata: {
-    title: `Gatsby Starter Blog`,
+    title: `Java Performace`,
     author: {
-      name: `Kyle Mathews`,
-      summary: `who lives and works in San Francisco building useful things.`,
+      name: `Brahian Velazquez`,
+      summary: `Java blog focus on performace and concurrency`,
     },
-    description: `A starter blog demonstrating what Gatsby can do.`,
-    siteUrl: `https://gatsbystarterblogsource.gatsbyjs.io/`,
+    description: `Java blog focus on performace and concurrency`,
+    siteUrl: `https://github.com/BrahianVT`,
     social: {
-      twitter: `kylemathews`,
+      github: `BrahianVT`,
     },
   },
   plugins: [
@@ -127,4 +127,5 @@ module.exports = {
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
   ],
+  pathPrefix: "/JPerformance"
 }
