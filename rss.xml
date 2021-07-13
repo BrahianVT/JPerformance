@@ -1,0 +1,689 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Java Performace]]></title><description><![CDATA[Java blog focus on performace and concurrency]]></description><link>https://github.com/BrahianVT</link><generator>GatsbyJS</generator><lastBuildDate>Tue, 13 Jul 2021 05:11:59 GMT</lastBuildDate><item><title><![CDATA[The Z Garbage Collector]]></title><description><![CDATA[The Z Garbage Collector (ZGC) is a scalable low latency garbage collector. ZGC performs all expensive work concurrently, without stopping…]]></description><link>https://github.com/BrahianVT/z-garbage-collector/</link><guid isPermaLink="false">https://github.com/BrahianVT/z-garbage-collector/</guid><pubDate>Fri, 09 Jul 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;The Z Garbage Collector (ZGC) is a scalable low latency garbage collector. ZGC performs all expensive work concurrently, without stopping
+the execution of application threads for more than 10ms, which makes is suitable for applications which require low latency and/or use
+a very large heap (multi-terabytes).&lt;/p&gt;
+&lt;p&gt;The Z Garbage Collector is available as an experimental feature, and is enabled with the command-line options &lt;strong&gt;-XX:UnlockExperimentalVMOptions&lt;/strong&gt;
+and &lt;strong&gt;-XX:+UseZGC&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2&gt;Setting the Heap Size&lt;/h2&gt;
+&lt;p&gt;The most important tuning option for ZGC is setting the max heap size (&lt;strong&gt;-Xmx&lt;/strong&gt;). Since ZGC is a concurret collector a max heap size must be
+selected such that, 1) the heap can be accommodate the live-set of your application, and 2) there is enough headroom in the heap to allow allocations to be serviced while the GC is running. How much headroom is needed very much depends on the allocation rate and the live-set size of
+the application. In general, the more memory you give to ZGC the better. But at the same time, wasting memory is undesirable, so it’s all about
+finding a balance between memory usage and how often the GC needs to run.&lt;/p&gt;
+&lt;h2&gt;Setting Number of Concurrent GC Threads&lt;/h2&gt;
+&lt;p&gt;The second tuning option one might want to look at is setting the number of concurrent GC threads &lt;strong&gt;-XX:ConcGCThreads&lt;/strong&gt;. ZGC has heuristics to automatically select this number. This heuristic usually works well but depending on the characteristics to automatically select this number. This
+heuristic usually works well but depending on the characteristics of the application this might need to be adjusted. This option essentially dictates how much CPU-time the GC should be given. Give it too much and the GC will steal too much CPU-time from the application. Give it too little, and the application might allocate garbage faster than the GC can collect it.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Garbage-First Garbage Collector Tuning]]></title><description><![CDATA[General Recommendations for G1 The general recommendations is to use G1 with its defaults settings, eventually giving it a different pause…]]></description><link>https://github.com/BrahianVT/garbage-First-Collector-tuning/</link><guid isPermaLink="false">https://github.com/BrahianVT/garbage-First-Collector-tuning/</guid><pubDate>Mon, 05 Jul 2021 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;General Recommendations for G1&lt;/h2&gt;
+&lt;p&gt;The general recommendations is to use G1 with its defaults settings, eventually giving it a different pause-time goal and setting a maximum Java heap size by using &lt;strong&gt;-Xmx&lt;/strong&gt; if desired.&lt;/p&gt;
+&lt;p&gt;G1 defaults have been balanced differently than either of the other collectors. G1’s goals in the default configuration are neither maximum throughput nor lowest latency, but to provide relatively small, uniform pauses at high throughput. However, G1’s mechanisms to incrementally reclaim space in the heap and the pause-time control incur some overhead in both the application threads and in the
+space-reclamation efficiency.&lt;/p&gt;
+&lt;p&gt;If you prefer high throughput, then relax the pause-time goal by using &lt;strong&gt;-XX:MaxGCPauseMillis&lt;/strong&gt; or provide a larger heap. If latency is the main requirement, then modify the pause-time target. Avoid limiting the young generation size to particular values by using options like &lt;strong&gt;-Xmn&lt;/strong&gt; and &lt;strong&gt;-XX:NewRatio&lt;/strong&gt; and others because the young generation size is the main means for G1 to allow it to meet the pause-time. Setting the young generation size to a single value overrides and practically disables pause-time control.&lt;/p&gt;
+&lt;h2&gt;Moving to G1 from Other Collectors&lt;/h2&gt;
+&lt;p&gt;Generally, when moving to G1 from other collectors, particularly the Concurrent Mask Sweep collector, start by removing all options that affect garbage collection, and only set the pause-time goal and overall heap size by using &lt;strong&gt;-Xmx&lt;/strong&gt; and optionally &lt;strong&gt;-XMs&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2&gt;Improving G1 Performace&lt;/h2&gt;
+&lt;p&gt;G1 is designed to provide good overall performance without the need to specify additional options. However, there are cases when the default heuristics or default configurations for them provide suboptimal results. For diagnosis purposes, G1 provides comprehensive logging. A good start is to use the &lt;strong&gt;-Xlog:gc*=debug&lt;/strong&gt; option and then refine the output from that if necessary.&lt;/p&gt;
+&lt;h2&gt;Observing Full Garbage Collections&lt;/h2&gt;
+&lt;p&gt;A full heap garbage collection is time consuming. Full GCs caused by too high heap occupancy in the old generation can be detected by finding the words Pause Full in the log. Full GCs are typically preceded by garbage collections that encounter an evacuation failure indicated by &lt;strong&gt;to-space-exhausted&lt;/strong&gt; tags.&lt;/p&gt;
+&lt;p&gt;G1 gives you several options to handle this situation better:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;You can determine the number of regions occupied by humongous objects on the Java heap using the the &lt;strong&gt;gc+heap=info&lt;/strong&gt; logging Y in the lines “Humongous regions : X -&gt; Y” give you the amount of regions occupied by humongous objects. If this number is high compared to the number of old regions, the best option is to try to decrease the objects by using &lt;strong&gt;-XX:G1HeapRegionsSize&lt;/strong&gt; .&lt;/li&gt;
+&lt;li&gt;Increase the size of the Java heap. It typically increases the amount of time marking has to complete.&lt;/li&gt;
+&lt;li&gt;Increase the number of concurrent marking threads by setting &lt;strong&gt;-XX:ConcGCThreads&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Force G1 to start marking earlier. G1 automatically determines the Initiating Heap Occupancy Percent threshold based on earlier application behavior. There are two options: Lower the target occupancy for when to start space-reclamation by increasing the buffer used in an adaptive IHOP calculation by modifying &lt;strong&gt;-XX:G1ReservePercent&lt;/strong&gt; ; or, disable the adaptive calculation of the IHOP by setting it manually using -XX:-G1UseAdaptiveIHOP and &lt;strong&gt;-XX:InitiatingHeapOccupancyPercent&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Humongous Object Fragmentation&lt;/h2&gt;
+&lt;p&gt;A Full GC could occur before all Java heap memory has been exhausted due to the necessity of finding a contiguous set of regions for them. Potencial options in this case are increasing the heap region size by using the option &lt;strong&gt;XX:G1HeapRegionSize&lt;/strong&gt; to decrease the number of humongous objects, or increasing size of the heap.&lt;/p&gt;
+&lt;h2&gt;Tuning for Latency&lt;/h2&gt;
+&lt;p&gt;Improve G1 behavior in case of common latency problems that is, if the pause-time is too high.&lt;/p&gt;
+&lt;h3&gt;Unusual System or Real-Time Usage&lt;/h3&gt;
+&lt;p&gt;For every garbage collection pause, the &lt;strong&gt;gc+cpu=info&lt;/strong&gt; log output contains a line including information from the operating system with a breakdown about where during the pause-time has been spent. An example for such output is &lt;strong&gt;User=0.19s Sys=0.00s Real=0.01s&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;User time is time spent in VM code, system time is the time spent in the operating system, and real time is the amount of absolute time passed during the pause.If the system time is relatively high, then most often the environment is the cause.&lt;/p&gt;
+&lt;p&gt;Common known issues for high system time are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The VM allocating or giving back memory from the operating system memory from the operating system memory may cause unnecessary delays. Avoid the delays by setting minimum and maximum heap sizes to the same value using the options &lt;strong&gt;-Xms&lt;/strong&gt; and _&lt;strong&gt;-Xmx&lt;/strong&gt;, and pre-touching all memory using &lt;strong&gt;-XX:AlwaysPreTouch&lt;/strong&gt; to move this work to the VM startup phase.&lt;/li&gt;
+&lt;li&gt;In Linux, coalescing of small pages into huge pages by the Transparent Huge Pages (THP) feature tends to stall random processes, not just during a pause. Because the VM allocates and maintains a lot of memory, there is a higher than usual risk that the VM will be the process that stalls for a long time.&lt;/li&gt;
+&lt;li&gt;Writing the log output may stall for some time because of some background task intermittently taking up all I/O bandwidth for the hard disk the log is written to.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Reference Object Processing Takes Too Long&lt;/h2&gt;
+&lt;p&gt;Information about the time taken for processing of Reference Objects is shown in the Reference Processing phase. Here the G1 updates the referents of Reference Objects according to the requirements of  the particular type of Reference Object. By default, G1 tries to parallelize the sub-phases of the Reference Processing using the following heuristic: for every &lt;strong&gt;-XX:ReferencePerThread&lt;/strong&gt; reference Objects start a single thread, bounded by the value in &lt;strong&gt;-XX:ParallelGCThreads&lt;/strong&gt;. This heuristic can be disabled by setting &lt;strong&gt;-XX:ReferencePerThread&lt;/strong&gt; to 0 to use all available threads by default, or parallelization disabled completely by &lt;strong&gt;-XX:-ParallelRefProcEnabled&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2&gt;Young-Only Collections Within the Young-Only Phase Take Too Long&lt;/h2&gt;
+&lt;p&gt;The time is proportional to the size of the young generation, the number of live objects within the collection set that  needs to be copied, one tuning is decrease &lt;strong&gt;-XX:G1NewSizePercent&lt;/strong&gt;.
+Also decrease the maximum young generation size  by using &lt;strong&gt;XX:G1MaxNewSizePercent&lt;/strong&gt;. This limits the maximum size of the of the young generation and so the number of objects that need to be processed during the pause.&lt;/p&gt;
+&lt;h2&gt;Mixed Collections Take Too Long&lt;/h2&gt;
+&lt;p&gt;Mixed collections are used to reclaim space in the old generation. The collection set of mixed collections contains young and old generation regions. You can obtain information about how much time evacuation of either young or old generation regions contribute to the pause-time by enabling the &lt;strong&gt;gc+ergo+cset=trace&lt;/strong&gt; log output. Look at the predicted young region time and predicted old region time for young and old generation regions respectively.To reduce the contribution of  the old generation regions to the pause-time, G1 provides the following options:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Spread the old generation region reclamation across more garbage collection by increasing &lt;strong&gt;-XX:G1MixedGCCountTarget&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Avoid collecting regions that take a proportionally large amount of time to collect by not putting them into the candidate collection set by using &lt;strong&gt;-XX:G1MixedGCLiveThresholdPercent&lt;/strong&gt;, highly occupied regions take a lot of time to collect.&lt;/li&gt;
+&lt;li&gt;Stop old generation space reclamation earlier so that G1 won’t collect as many highly occupied regions. In this case, increase &lt;strong&gt;-XX:G1HeapWastePercent&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;High Update RS and Scan RS Times&lt;/h2&gt;
+&lt;p&gt;To enable G1 to evacuate single old generation regions, G1 tracks locations of cross-region references, that is references that point from one region to another. The set of cross-region references pointing into a given region is called that region’s remembered set. The remembered sets must be updated when moving the contents of a region. Maintenance of the regions’ remembered sets is mostly concurrent.&lt;/p&gt;
+&lt;p&gt;G1 requires complete remembered sets for garbage collection, so the Update RS phase of the garbage collection processes any outstanding remembered set update requests. The Scan RS phase searches for object references in remembered sets, moves region contents, and then updates these object references to the new locations. Depending on the application, these two phases may take a significant amount of time.&lt;/p&gt;
+&lt;p&gt;Adjusting the size of the heap regions by using the option &lt;strong&gt;-XX:G1HeapRegionSize&lt;/strong&gt; affects the number of cross-region references and as well as the size of the remembered set. Handling the remembered sets for regions may be significant part of garbage collection work.&lt;/p&gt;
+&lt;p&gt;G1 tries to schedule concurrent processing of the remembered set updates so that the Update RS phase takes approximately &lt;strong&gt;-XX:G1RSetUpdatingPauseTimePercent&lt;/strong&gt; percent of the allowed maximum pause time. By decreasing this value, G1 usually performs more remembered set update work concurrently.&lt;/p&gt;
+&lt;p&gt;Spurious high Update RS times in combination with the application allocating large objects may be caused by the optimization that tries to reduce concurrent remembered set update work by batching it. If the application that created such a batch happens just before a garbage collection, then the garbage collection must process all this work in the Updated RS times part of the pause. Use &lt;strong&gt;—XX:ReduceInitialCardMarks&lt;/strong&gt; to disable this behavior and potentially avoid these situations.&lt;/p&gt;
+&lt;p&gt;Scan RS Time is also determined by the amount of compression that G1 performs to keep remembered set storage size low. The more compact the remembered set is stored in memory, the more time it takes to retrieve the stored values during garbage collection. G1 automatically performs this compression, called remembered set, coarsening, while updating the remembered sets depending on the current size of that region’s remembered set. The highest compression level, retrieving the actual data can be very slow. The option &lt;strong&gt;XX:G1SummarizeRSetStatsPeriod&lt;/strong&gt; in combination with &lt;strong&gt;gc+remset=trace&lt;/strong&gt; level logging shows if this coarsening occurs. If so, then the X in the line “Did &lt;X&gt; coarsenings” in the Before GC Summary section shows a high value. The &lt;strong&gt;-XX:G1RSetRegionEntries&lt;/strong&gt; option could be increased significantly to decrease the amount of these coarsenings.&lt;/p&gt;
+&lt;h2&gt;Tuning for Throughput&lt;/h2&gt;
+&lt;p&gt;G1’s default policy tries to maintain a balance between throughput and latency; however, there are situations where higher througput is desirable. Apart from decreasing the overall pause-times, the frequency of the pauses could be decreased. The main  idea is to increase the maximum pause time by using &lt;strong&gt;-XX:MaxGCPauseMillis&lt;/strong&gt;. The generation sizing heuristics will automatically adapt the size of young generation, which directly determines the frequency of pauses. If that does not result in expected behavior, particulary during the space-reclamation phase, increasing the minimum young generation size using &lt;strong&gt;-XX:G1NewSizePercent&lt;/strong&gt; will force G1 to do that.&lt;/p&gt;
+&lt;p&gt;In some cases, &lt;strong&gt;-XX:G1MaxNewSizePercent&lt;/strong&gt;, the maximum allowed young generation size, may limit throughput by limiting young generation size. In this example combined percentage of Eden regions and survivor regions is close to _&lt;strong&gt;XX:G1MaxNewSizePercent&lt;/strong&gt; percent of the total number of regions. Consider increasing &lt;strong&gt;-XX:G1MaxNewSizePercent&lt;/strong&gt; in this case. Another option to increase throughput is to try to decrease the amount of concurrent work in particular, concurrent remembered set updates often require a lot of CPU resources. Increasing &lt;strong&gt;-XX:G1RSetUpdatingPauseTimePercent&lt;/strong&gt; moves from work concurrent operation into the garbage collection pause. Also the concurrent remembered set updates can be disabled by setting &lt;strong&gt;-XX:-G1UseAdaptiveConcRefinement&lt;/strong&gt; , &lt;strong&gt;-XX:G1ConcRefinamentGreenZone=2G&lt;/strong&gt; , &lt;strong&gt;-XX:G1ConcRefinementThreads = 0&lt;/strong&gt;. This mostly disables this mechanism and moves all remembered set update work into the next garbage collection pause.&lt;/p&gt;
+&lt;p&gt;Enabling the use of large pages by using &lt;strong&gt;-XX:+UseLargePages&lt;/strong&gt; may also improve throughput, you can minimize heap resizing work by disabling it, set the options &lt;strong&gt;-Xms&lt;/strong&gt; and &lt;strong&gt;-Xmx&lt;/strong&gt; to the same value, in adition you can use &lt;strong&gt;-XX:+AlwaysPreTouch&lt;/strong&gt; to move the operating system work to back virtual memory with physical memory to VM startup time.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Garbage-First Garbage Collector]]></title><description><![CDATA[Garbage-First Garbage Collector The garbage first (G1) garbage collector is targeted for multiprocessor machines with a large amount of…]]></description><link>https://github.com/BrahianVT/garbage-First-Collector/</link><guid isPermaLink="false">https://github.com/BrahianVT/garbage-First-Collector/</guid><pubDate>Sat, 03 Jul 2021 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Garbage-First Garbage Collector&lt;/h2&gt;
+&lt;p&gt;The garbage first (G1) garbage collector is targeted for multiprocessor machines with a large amount of memory. It attempts to meet garbage collection pause-time goals with high probability while achieving
+high throughput, some features include:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Heap sizes up to tens of GBs or larger, with more than 50% of the Java heap occupied with live data&lt;/li&gt;
+&lt;li&gt;Rates of object allocation and promotion that can vary significantly over time.&lt;/li&gt;
+&lt;li&gt;A significant amount of fragmentation in the heap.&lt;/li&gt;
+&lt;li&gt;Predictable pause-time target goals that aren’t longer than a few hundred milliseconds&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;G1 replaces the Conncurrent Mark-Sweep (CMS) collector, It is also the default collector. G1 Collector achieves high performance and tries to meet pause-time goals in several ways.&lt;/p&gt;
+&lt;h2&gt;Basic Concepts&lt;/h2&gt;
+&lt;p&gt;Enable it by providing &lt;strong&gt;-XX:+USeG1GC&lt;/strong&gt; on the command line, it is generational, incremental, parallel, mostly concurrent, stop-the-world and evacuating garbage collector which monitors pause-time goals in each of the stop-the-world pauses. Space-reclamations efforts concentrate on the young generation where it is most efficient to do so, with occasional space-reclamation in the old generation, occasional reclamation in the old generation.&lt;/p&gt;
+&lt;p&gt;To keep stop-the-world pauses short for space-reclamation, G1 performs space-reclamation incrementally in steps and in parallel. G1 achieves predictability by tracking information about previous application behavior and garbage collection pauses to build a model of the associated costs. It uses this information to size the work done in the pauses. G1 reclaims space in the most efficient areas first.&lt;/p&gt;
+&lt;p&gt;G1 reclaims space by using evacuation: live objects found within selected memory areas to collect are copied into new memory areas, compacting them in the process. After the evacuation, the space previousl occupied by live objects is reused for allocation by the application.&lt;/p&gt;
+&lt;p&gt;The Garbage-First collector is not a real-time collector. It tries to meet set pause-time targets with high probability over a longer time.&lt;/p&gt;
+&lt;h2&gt;Heap Layout&lt;/h2&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 447px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/efdc1cd961410c569c8297e6bc71fc7f/a2d48/heapLayount.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 67.08860759493672%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAANCAIAAAAmMtkJAAAACXBIWXMAAAsTAAALEwEAmpwYAAACUElEQVQoz0WQy09aYRDF+aObLrsz7mybpo19mZqqqYltDKki1BQQISAqT+/9XjPzPbmAcJGFbUw3DWDazWRmTnJ+cybjQxiPRslkPH7403y+2Xq5WR089Ia/zqJRbKejWWqn84O6O2qaa5zCIA1hkAyHzrn7+/uM4jG4cL6XPdvJNnOnnZ/V3PZRYTd3wW1X2Mb2Xvv7SaVHzT70hBZopOAAKoqi6XSa6cXA3Li6k619+qpC0NNZ8f1BZSdrrEHr80/Xzl9t+WHwVscCBZgOIwGacz6bzTKnHd/kibQuTG5ZzCTQMdw3Br+VEDS4za2/zX/4qr2PwR3dpGU+KbRCW3gpxd3dXYYJqZAkIYXkuAEVmeafvcivvZHGGsJYEmiHijP0uSfrp+/2wTklVRzHaZpmLIEfT2qfv5U/7reE5RRYu8/6snLjI0y8BmtdPfYRDaPaRbfFaiyJ0YNS8/k8c30DN3p8/OW0sF8QSmlrW8Xa1dllNXJtGcpXvNLVh3Vd7XsIo1iHSlf3hOGcpbNZptT1FzwpsnEnzON+X7mktLFVfr1DzgLq3RI/bJj8hapHjtlU6IEmsEY/ZgYAY4zgXCNyIu29stYmCRdCG42grNFKSa21EAKRlAIievw2AFhrleB6NCltbBU3toS2VpNSCxO1UN2yWkQ0xiDiymhBVkotyIJrHxonZ5c/alwCIXLOiUjKRyYRLcmolEJExtiCvCJIKZ21QqMdJlKIpd2i/lNXPREBwH/yaniUhbRaI5FzDhGdc6u7aLkhokWQpcUq81+wXJE2MzfXcAAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;Heap Layout&quot;
+        title=&quot;Heap Layout&quot;
+        src=&quot;/JPerformance/static/efdc1cd961410c569c8297e6bc71fc7f/a2d48/heapLayount.png&quot;
+        srcset=&quot;/JPerformance/static/efdc1cd961410c569c8297e6bc71fc7f/c26ae/heapLayount.png 158w,
+/JPerformance/static/efdc1cd961410c569c8297e6bc71fc7f/6bdcf/heapLayount.png 315w,
+/JPerformance/static/efdc1cd961410c569c8297e6bc71fc7f/a2d48/heapLayount.png 447w&quot;
+        sizes=&quot;(max-width: 447px) 100vw, 447px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;G1 partitions the heap into a set of equally sized heap regions, each a contiguous range of virtual memory as shown in the image, a region is the unit of memory allocation and memory reclamation. At any given time, each of these regions can be empty, or assigned to a particular generation, young or old. As requests for memory comes in, the manager hands out free regions. The memory manager assigns them to a generation and  then returns them to the application as free space into which it can allocate itself.&lt;/p&gt;
+&lt;p&gt;The young generation contains eden regions (red) and survivor regions (red with “S”). These regions provide the same function as the respective contiguous spaces in other collectors, with the difference that in G1 these regions are typically laid out in a noncontiguous pattern in memory. Old generation regions may be humongous (light blue with “H”) for objects that span multiple regions.&lt;/p&gt;
+&lt;p&gt;An application always allocates into a young generation, that is, eden regions, with the exception of humongous objects that are directly allocated as belonging to the old generation.&lt;/p&gt;
+&lt;h2&gt;Garbage Collection Cycle&lt;/h2&gt;
+&lt;p&gt;On a high level, the G1 collector alternates between two phases. The young-only phase contains garbage collections that fill up the currently available memory with objects in the old generation gradually. The space-reclamation phase is where G1 reclaims space in the old generation gradually. The space-reclamation phase  in where G1 reclaims space in the old generation incrementally, in addition to handling the young generation. Then the cycle restarts with a young-only phase.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 474px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/a8b751e2e0b8814b75635db19a65e7b7/5595f/regions.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 72.15189873417721%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAOCAIAAACgpqunAAAACXBIWXMAAAsTAAALEwEAmpwYAAAB10lEQVQoz31Sy47TMBTN57JHfA1ijdiwRIhZA2IQncJ0mj4zfSRN4sRJ7PgRO7YvStJmqGbEkWVdy+ccH91rT8imNSbD5S48HU9pFKd5ln+epfMT8cNiG+NFmC8SbuJJ7X9CmKC8MMYCgAPw/HVweze7X2x+z1c/pw+zZXBMslcf/LdfjwCutc5Y0wDwybv6y2uq4F94jVK0ZqRmlHEpRJKVN3dBRZlx3bV1PbrKgmm/rbNKaKVNWZGKUG/w6JmAmbo/YAAw9kl1Qe/ggN68odP3adUkKfLcBQAQZSWu5UBslF5t97PFZrnZ/fHXSimAjqQWH+vH772b80bnprU/NggGSrc73baMCyGkkI215xTOuRgVznY988bMXKq8YuPxRQwBJw+rgtRX4nWEf20SozUTkveLccmE4EIw0RVCNFxIrdV0h6OcXsS9X0WovwrG439ACG3b9iweI+UlsX2OoiLHU4ryIoxRnGRhjA5RwoUcBoFweZ7zKAUAGhcs6HpWlNVyu48SdIySfRgHhzDYh5R2HaHblCMyzM67CqRMvk9VH+lFNFrnhxSUuX75At22aY5lo54ruZD9xzZP3/M5yRiLCa3mES8Zk5LJhhd15UdFXQ/jHcV/ARhuIx8FuipuAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;Cycles&quot;
+        title=&quot;Cycles&quot;
+        src=&quot;/JPerformance/static/a8b751e2e0b8814b75635db19a65e7b7/5595f/regions.png&quot;
+        srcset=&quot;/JPerformance/static/a8b751e2e0b8814b75635db19a65e7b7/c26ae/regions.png 158w,
+/JPerformance/static/a8b751e2e0b8814b75635db19a65e7b7/6bdcf/regions.png 315w,
+/JPerformance/static/a8b751e2e0b8814b75635db19a65e7b7/5595f/regions.png 474w&quot;
+        sizes=&quot;(max-width: 474px) 100vw, 474px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;In the image describes the phases, their pauses and the transition between the phases of the G1 garbage collection in detail:&lt;/p&gt;
+&lt;h2&gt;Young-only&lt;/h2&gt;
+&lt;p&gt;This phase starts with a few Normal young collections that promote objects into the old generation. The transition to the space-reclamation starts when the old generation occupancy reaches a certain threshold.
+-Concurrent Start: Starts the marking process in addition to performing a Normal young collection. Concurrent marking determinates
+all currently reachable (live) objects in the old generation regions to be kept for the following space-reclamation phase.
+-Remark: It finalizes the marking itself, performs global reference processing and class unloading, reclaims completely empty regions
+and cleans up internal data structures.
+-Cleanup: Determines whether a space-reclamation phase will actually follow. If a space-reclamation phase follows, the young-only phase
+completes with a single Prepare Mixed young collection.&lt;/p&gt;
+&lt;h2&gt;Space Reclamation Phase&lt;/h2&gt;
+&lt;p&gt;Consists of multiple Mixed collections that in adition to young generation regions, also evacuate live objects of sets of old generation regions.
+The space-reclamation phase ends when G1 determines that evacuating more old generation regions wouldn’t yield enough free space worth the effort.&lt;/p&gt;
+&lt;p&gt;After the space-reclamation, the collection cycle restarts with another young-only phase. As backup, if the application runs out of memory while gathering liveness information, G1 performs an in-place-stop-the world full heap compaction (Full GC) like other collectors.&lt;/p&gt;
+&lt;h2&gt;Garbage Collection Pauses and Collection Set&lt;/h2&gt;
+&lt;p&gt;G1 performs garbage collections and space reclamation in the stop-the-world-pauses. Live objects are typically copied from source regions to one or more destination regions in the heap, and existing references to these moved objects are adjusted. The collection set is the set of source regions
+to reclaim space from, the collection set consists of different kinds of regions, in the young phase for example, the collection is from humongous regions with objects that could potentially be reclaimed.&lt;/p&gt;
+&lt;h2&gt;Garbage-First Internals&lt;/h2&gt;
+&lt;p&gt;This section describes some important details of the Garbage-First (G1) garbage collector. When resizing the Java heap, using &lt;strong&gt;-XX:InitialHeapSize&lt;/strong&gt; as  the minimum Java heap size,  and &lt;strong&gt;-XX:MaxHeapSize&lt;/strong&gt; as the maximum Java heap size, &lt;strong&gt;-XX:MaxHeapFreeRatio&lt;/strong&gt; for determining the maximum percentage of free memory after resizing.&lt;/p&gt;
+&lt;h2&gt;Young-Only Phase Generation Sizing&lt;/h2&gt;
+&lt;p&gt;G1 always sizes the young generation at the end of a normal young collection for the next mutator phase. G1 meet the pause time goals using &lt;strong&gt;-XX:MaxGCPauseTimeMillis&lt;/strong&gt; and &lt;strong&gt;-XX:PauseTimeIntervalMillis&lt;/strong&gt; based on long-term observations of actual pause time. It takes into account how long it took young generations of similar size to evecuate.
+if not otherwise constrained, then G1 adaptively sizes the young generation size between &lt;strong&gt;-XX:G1NewSizePercent&lt;/strong&gt; and &lt;strong&gt;-XX:G1MaxNewSizePercent&lt;/strong&gt; determine to meet pause-time.&lt;/p&gt;
+&lt;h2&gt;Space-Reclamation Phase Generation Sizing&lt;/h2&gt;
+&lt;p&gt;During the space-reclamation phase, G1 tries to maximize the amount of space that is reclaimed in the old generation in a single garbage collection pause. The size of the young generation is set to the minimum allowed, typically as determied by &lt;strong&gt;-XX:G1NewSizePercent&lt;/strong&gt;.
+In each mixed collection in this phase, G1 selects a set of regions from the collection set candidates to add to the collection set.It consist of three parts, a minimum set of old generation regions and it is determined by the number of regions in the collection set candidates divided by the length of the Space-Reclamation phase determined by &lt;strong&gt;-XX:G1MixedGCCountTarget&lt;/strong&gt;. It also adds old generation regions from the collection set candidates if G1 predicts that after collecting the minimum set there will be time left. A set of  optional collection set regions that G1 evacuates incrementally after the other two parts have been evacuated and there is time left in this pause.
+The Space-Reclamation phase ends when the remaining amount of space that can be reclaimed in the collection set candidate regions is less than the percentage set by &lt;strong&gt;-XX:G1HeapWastePercent&lt;/strong&gt;&lt;/p&gt;
+&lt;h2&gt;Periodic Garbage Collections&lt;/h2&gt;
+&lt;p&gt;If there is no garbage collection for a long time, the VM may hold on to a large amount of unused memery for a long time that could be used elsewhere. To avoid this , G1 can be forced to do regular garbage collection using the &lt;strong&gt;-XX:PeriodicGCInterval&lt;/strong&gt;, if the amount of time passed and if there is no concurrent cycle in progress, G1 triggers additional garbage collections, for example in the Young-Only phase starts a concurrent marking using a Concurrent Start pause if &lt;strong&gt;-XX:-G1PeriodicGCInvokesConcurrent&lt;/strong&gt; was specified.
+The &lt;strong&gt;-XX:G1PeriodicGCSystemLoadThreshold&lt;/strong&gt; option may be used to refine whether a garbage collection is triggered.&lt;/p&gt;
+&lt;h2&gt;Determining Initial Heap Occupancy&lt;/h2&gt;
+&lt;p&gt;The Initiating Heap Occupancy Percent (IHOP) is the threshold at which an Initial Mark collection is triggered and it is defined as a percentage of the old generation size.
+An optional IHOP is defined in the G1 by observing how long marking takes abd how much memory is typically allocated in the old generation during marking cycles, the feature is called Adaptive IHOP and the option &lt;strong&gt;-XX:InitiatingHeapOccupancyPercent&lt;/strong&gt; determines the initial value as a percentage of the size of the current old generation as long as there aren’t enough observations to make good prediction, turn off this behavior of G1 using the option XX:-G1UseAdaptiveIHOP. IHOP tries to set the Initiating Heap Occupancy so that the first mixed garbage collection of the space-reclamation phase starts when the old generation occupacy is at a current maximum old generation size minus the value of
+&lt;strong&gt;-XX:G1HeapReservePercent&lt;/strong&gt; as the extra buffer.&lt;/p&gt;
+&lt;h2&gt;Marking&lt;/h2&gt;
+&lt;p&gt;G1 marking uses an algorithm called Snapshot-At-The-Beginning (SATB). It takes virtual snapshot of the heap at the time of the Initial Mark pause, when all objects that were live at the start of marking are considered live for the remainder of marking. This means that objects that become dead during marking are still considered live for the purpuse of the space-reclamation.&lt;/p&gt;
+&lt;h2&gt;Humongous Objects&lt;/h2&gt;
+&lt;p&gt;Humongous objects are objects larger or equal the size of half a region, the current region size is determined ergonomically, unless set using the &lt;strong&gt;-XX:G1HeapRegionSize&lt;/strong&gt; option.
+Generally, humongous objects can be reclaimed only at the end of marking during the Cleanup pause, or during Full GC if they became unreachable.There is, however, a special provision for humongous objects for arrays of primitives types for example, bool, all kinds of integers, and floating point values.G1 tries to reclaim humongous objects if they are not referenced by many objects. This behavior is enable by default, you can disable it with the option &lt;strong&gt;-XX:G1EagerReclaimHumongousObjects&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2&gt;Ergonomic Defaults for G1 GC&lt;/h2&gt;
+&lt;p&gt;This topic provides an overview of the most important defaults specific to G1 and their default values.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&quot;left&quot;&gt;Option and Default Value&lt;/th&gt;
+&lt;th align=&quot;left&quot;&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-XX:MaxGCPauseMillis=200&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;The goal for the maximum pause time.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------------------&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-XX:GCPauseTimeInterval=ergo&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;The goal for the maximum pause time interval. By default&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;G1 doesn’t set any goal, allowing G1 to perform garbage&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;collections back-to-back in extreme cases.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------------------&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-XX:ParallelGCThreads=ergo&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;The maximum number of threads used for parallel work&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;during garbage collection pauses. This is derived from&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;the number of available threads of the computer that the&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;VM runs.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;At the start of every pause, the maximum number of threads&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;used is further constrained by the maximum total heap size&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;G1 will not use more than one thread&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;per-XX:HeapSizePerGCThread amount of Java heap capacity.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------------------&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-XX:ConcGCThreads=ergo&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;The maximum number of threads used for concurrent work.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;By default this value is -XX:ParallelGCThreads.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------------------&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-XX:+G1UseAdaptiveIHOP&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;Defaults for controlling the initiating heap occupancy&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;indicate.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;XX:InitiatingHeapOccupancyPercent:45&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;that adaptive determination of that value is turned on, and&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;that for the first few collection cycles G1 will use an&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;occupancy of 45% of the old generation as mark start&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;threshold.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------------------&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-XX:G1HeapRegionSize=ergo&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;The set of the heap region size based on initial and maximum&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;heap size. So that heap contains roughly 2048 heap regions.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;The size of a heap region can vary from 1 to 32 MB, and must&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;be power of 2.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------------------&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-XX:G1NewSizePercent=5&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;The size of the young generation in total, which varies&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;between&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-XX:G1MaxNewSizePercent=60&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;these two values as percentages of the current Java Heap in&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;use.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------------------&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-XX:G1HeapWastePercent=5&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;The allowed unreclaimed space in the collection&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;set candidates as a percentage. G1 stops the&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;space-reclamation phase if the free&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;space in the collection set candidates is lower than that.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------------------&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-XX:G1MixedGCCountTaeget=8&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;The expected length of the space-reclamation phase in a number&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;of collections.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;-------------------------------------------&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;XX:G1MixedGCLiveThresholdPercet=85&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;Old generation regions with higher live objects occupancy than&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;this percentage aren’t collected in this space-reclamation&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;phase.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</content:encoded></item><item><title><![CDATA[Available Collectors]]></title><description><![CDATA[Available Collectors The Java HotSpot VM includes three diffent types of collectors, each with different
+performance characteristics…]]></description><link>https://github.com/BrahianVT/available-collectors/</link><guid isPermaLink="false">https://github.com/BrahianVT/available-collectors/</guid><pubDate>Fri, 02 Jul 2021 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Available Collectors&lt;/h2&gt;
+&lt;p&gt;The Java HotSpot VM includes three diffent types of collectors, each with different
+performance characteristics.&lt;/p&gt;
+&lt;h2&gt;Serial Collector&lt;/h2&gt;
+&lt;p&gt;The serial collector uses a single thread to perform all the garbage collection work
+which makes it relatively efficient because there is no communication overhead between threads.&lt;/p&gt;
+&lt;p&gt;This is the best option for single processor machines. The serial collector is selected by default on certain hardware and operating system configurations, or can be explicitly enabled with the option &lt;strong&gt;-XX:+UseSerialGC&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2&gt;Parallel Collector&lt;/h2&gt;
+&lt;p&gt;It’s also known as throughput collector, it’s a generational collector similar to the serial collector. The primary difference between the serial and parallel collectors is that the parallel collector has multiple threads which are used to speed up garbage collection.
+The parallel collector is intended for applications with medium-sized to large-sized data sets that are run on multiprocessor hardware. You can enable it by using the &lt;strong&gt;-XX:-UseParallelGC&lt;/strong&gt; option.&lt;/p&gt;
+&lt;h2&gt;The Mostly Concurrent Collectors&lt;/h2&gt;
+&lt;p&gt;Concurrent Mark Sweep (CMS) collector and Garbage-First (G1) garbage collector are the two mostly concurrent collectors. Mostly concurrent collectors perform some expensive work concurrently to the application.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;G1 garbage collector: This server-style collector is for multiprocessor machines with a large amount of memory. It meets garbage collection pause-time goals with high probability, it can be explicitly enabled using -XX:+UseG1GC.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;CMS collector: this collector is for applications that prefer shorter garbage collection pauses and can afford to share processor resources with the garbage collection, this collector is deprecated from JDK 9.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;The Z Garbage Collector&lt;/h2&gt;
+&lt;p&gt;It’s a scalable low latency garbage collector. ZGC performs all expensive work concurrently, without stopping the execution of application threads. ZGC is intended for applications which require low latency (less than 10 ms pauses)
+and/or use a very large heap. You can enable by using the &lt;strong&gt;-XX:+UseZGC&lt;/strong&gt; option. It’s available from JDK 11.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Factors Affecting Garbage Collection Performance]]></title><description><![CDATA[The two most important factors affecting garbage collection performance are total available memory and proportion to the heap dedicated to…]]></description><link>https://github.com/BrahianVT/factors-Affecting-Garbage-collection-Performance/</link><guid isPermaLink="false">https://github.com/BrahianVT/factors-Affecting-Garbage-collection-Performance/</guid><pubDate>Wed, 30 Jun 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;The two most important factors affecting garbage collection performance are total available memory and proportion to the heap dedicated to young generation.&lt;/p&gt;
+&lt;h2&gt;Total Heap&lt;/h2&gt;
+&lt;p&gt;The most important factor affecting garbage collection performace is total available memory.
+Because collections occur when generations fill up, throughput is inversely proporcional to the amount
+of memory available.&lt;/p&gt;
+&lt;h2&gt;Heap options affecting generation size&lt;/h2&gt;
+&lt;p&gt;A number of options affects generation size.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 564px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/a0fd892faf7dcf611549d74b3c386669/ba4d9/heap.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 30.37974683544304%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAGCAIAAABM9SnKAAAACXBIWXMAAAsTAAALEwEAmpwYAAABGUlEQVQY043LPU/CQBgA4P5ef4OjE44uDETEhRgXgx0ANUE8EmzB0KYNbUPhaGs/7u69611JTRyoiZNsPvujAQMAoJQyyjhwJZUQohQgBHBgwCjncFCykrJSilKCEDJNkzGWZZm2iTYpSbnkBS+Kksi6TAmxfextk22cpwVLiYiITJnkqgZR+r8cx0mSRGvftdEK4RwPjeHjXN/L3dL3z6/uOw+zwau1XEcvZtCfeCiAIK/K+rv5Q2t1WvpUNz2zN+7djHpuYT9/vJ9ddC9vx9eDmT61+iOj++SMrHyxYRE9nGS0RJZnuaFrY3tLd3mVhVk8WXhzO1z5ezeM17gIPmWYljGtQH2dZLzDhmGgN6SkaprmeDw2//YDCkM81osq4kAAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;Memory&quot;
+        title=&quot;Memory&quot;
+        src=&quot;/JPerformance/static/a0fd892faf7dcf611549d74b3c386669/ba4d9/heap.png&quot;
+        srcset=&quot;/JPerformance/static/a0fd892faf7dcf611549d74b3c386669/c26ae/heap.png 158w,
+/JPerformance/static/a0fd892faf7dcf611549d74b3c386669/6bdcf/heap.png 315w,
+/JPerformance/static/a0fd892faf7dcf611549d74b3c386669/ba4d9/heap.png 564w&quot;
+        sizes=&quot;(max-width: 564px) 100vw, 564px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;In the image the difference between commited space and virtual space in the heap. At initialization of the virtual machine, the entire space for the heap is reserved.The size of the space reserved can be specified with the &lt;strong&gt;-Xmx&lt;/strong&gt; option, If the value of the &lt;strong&gt;-Xms&lt;/strong&gt; parameter is smaller than the value of the &lt;strong&gt;-Xmx&lt;/strong&gt; parameter,then not all of the space that’s reserved is immediately committed to the virtual machine.The uncommitted space is labeled “virtual”. The old generation and young generation, can grow to the limit of the virtual space as needed.&lt;/p&gt;
+&lt;p&gt;Some of the parameters are ratios of one part of the heap to another. For example, the parameter &lt;strong&gt;XX:NewRatio&lt;/strong&gt; denotes the relative size of the old generation to the young generation.&lt;/p&gt;
+&lt;h2&gt;Default Option Values for Heap Size&lt;/h2&gt;
+&lt;p&gt;The virtual machine grows and shrinks the heap at each collection to try to keep the proportion of free space to live objects at each collection within a specific range.&lt;/p&gt;
+&lt;p&gt;This target range is set as a percentage by the options &lt;strong&gt;-XX:MinHeapFreeRatio=“minimum”&lt;/strong&gt; and &lt;strong&gt;-XX:MaxHeapFreeRatio=“maximum”&lt;/strong&gt;
+and the total size is bounded below by &lt;strong&gt;-Xms”min”&lt;/strong&gt; and above by &lt;strong&gt;-Xmx”max”&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;With these options, if the percent of free space in generation falls below 40%, then the generation expands to maintain 40% free space,up to the maximum allowed size of the generation.&lt;/p&gt;
+&lt;h2&gt;Conserving Dynamic Footprint by Minimizing Java Heap Size&lt;/h2&gt;
+&lt;p&gt;If you need to minimize the dynamic memory footprint (RAM consumed during execution) for your application, you can do this by minimizing the Java heap size. Minimize Java heap size by lowering the values of the options &lt;strong&gt;“-XX:MaxHeapFreeRation”&lt;/strong&gt; (default 70%) and &lt;strong&gt;-XX:MinHeapFreeRatio&lt;/strong&gt;(default 40%). Lowering &lt;strong&gt;-XX:MaxHeapFreeRatio&lt;/strong&gt; and &lt;strong&gt;-XX:MinHeapFreeRatio&lt;/strong&gt; by 10% has shown
+to successfully reduce the heap size without too much performace degradation.&lt;/p&gt;
+&lt;h2&gt;The Young Generation&lt;/h2&gt;
+&lt;p&gt;The second factor affecting garbage collection performance is the proportion of the heap dedicated to the young generation, the bigger the young generation, the less often minor collections occur.&lt;/p&gt;
+&lt;h3&gt;Young Generation Size Options&lt;/h3&gt;
+&lt;p&gt;By default, the young generation size is control by the option &lt;strong&gt;-XX:NewRatio&lt;/strong&gt;, setting &lt;strong&gt;-XX:NewRatio=3&lt;/strong&gt; means the ratio between the young and old generation is 1:3. The options &lt;strong&gt;-XX:NewSize&lt;/strong&gt; and &lt;strong&gt;-XX:MaxNewSize&lt;/strong&gt; bound young generation size from below and above.&lt;/p&gt;
+&lt;h2&gt;Survivor Space Sizing&lt;/h2&gt;
+&lt;p&gt;You can use the option &lt;strong&gt;-XX:SurvivorRatio&lt;/strong&gt; to tune the size of the survivor spaces, for example &lt;strong&gt;-XX:SurvivorRatio=6&lt;/strong&gt; sets the ratio between eden and a survivor space to 1:6.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&quot;left&quot;&gt;Option&lt;/th&gt;
+&lt;th align=&quot;left&quot;&gt;Default Value&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-XX:NewRatio&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-XX:NewSize&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;1310 MB&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-XX:MaxNewSize&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;not limited&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;-XX:SurvivorRatio&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;8&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The maximum size of the young generation is calculated from the maximum size of the total heap and the value of the &lt;strong&gt;-XX:NewRatio&lt;/strong&gt; parameter.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Garbage Collector implementation]]></title><description><![CDATA[The garbage collection is the principal bottleneck, it’s useful to understand some aspects of the implementation. Garbage collectors make…]]></description><link>https://github.com/BrahianVT/garbage-collector-impl/</link><guid isPermaLink="false">https://github.com/BrahianVT/garbage-collector-impl/</guid><pubDate>Sat, 26 Jun 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;The garbage collection is the principal bottleneck, it’s useful to understand some aspects of the implementation. Garbage collectors make assumptions about the way applications use objects, and these are reflected in tunable parameters that can be adjusted for improved performance without sacrificing the power of the abstraction.&lt;/p&gt;
+&lt;h2&gt;Generational Garbage Collection&lt;/h2&gt;
+&lt;p&gt;An object is considered garbage and its memory can be reused by the VM when it can no longer be reached from any reference of any other live object in the running program.&lt;/p&gt;
+&lt;p&gt;The JVM incorporates a number of different garbage collection algorithms that all use a technique called generational collection. The most important property is the weak generational hypothesis, which states that most objects survive for only a short period of time.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 543px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/b82c510e3bc3b18dccd4abfe1a4ea291/29579/blue.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 65.82278481012659%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAANCAIAAAAmMtkJAAAACXBIWXMAAAsTAAALEwEAmpwYAAABSElEQVQoz52Q3U7CQBBG+/5PQ4BLL0wkFig1GBMklrRQaLfdbv9tLd3ZGdNGlKiJ4JfJXuzOyXeyGgAgIhHt+liWFYYhEWEfIkqSxLZty7IcxwEAOgURtbIsq7cGAJQCdcr5EhH9vEFEANBCka62EaGSHd8tAYCU8k9YSqltPW5anAilhM/aS5o7eM/E0hZE2Jtfqe0y8bCJiNR586XaLhOmFXXa8A/tIF6cYLhW294Hxgsn7J7x2t++N5b6mhOpsm5EUbetVEq1UiLSx5zB2M8XvFg+DeeHm0d/bBxGhjdZ8WMridS3HqXUL9r63ByZwdDwxgt/MHMH0+1sHTy7YuNnTpA7QR6mVZy/BnGeFHVa1IeosFlWN8emabQ0y24n+p0+n0yNvc8ZT1wmth7f+ZHLhMuEF8ZBFPvdmTCeeGHshXGS5lVVvQOpveyz75aqyQAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;Memory&quot;
+        title=&quot;Memory&quot;
+        src=&quot;/JPerformance/static/b82c510e3bc3b18dccd4abfe1a4ea291/29579/blue.png&quot;
+        srcset=&quot;/JPerformance/static/b82c510e3bc3b18dccd4abfe1a4ea291/c26ae/blue.png 158w,
+/JPerformance/static/b82c510e3bc3b18dccd4abfe1a4ea291/6bdcf/blue.png 315w,
+/JPerformance/static/b82c510e3bc3b18dccd4abfe1a4ea291/29579/blue.png 543w&quot;
+        sizes=&quot;(max-width: 543px) 100vw, 543px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;
+The blue area in  the image is the typical distribution for the lifetimes of objects.The x-axis is the total bytes in objects with the corresponding lifetime.The sharp peak at the the left represents objects that be reclaimed shortly after being allocated so it focus in the assumption that a majority of objects “die young”.&lt;/p&gt;
+&lt;h3&gt;Generations&lt;/h3&gt;
+&lt;p&gt;To optimaze for this scenario, memory is managed in  generations(memory pools holding objects of different ages).
+Garbage collection occurs in each generation when the generation fills up.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 456px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/9a70a64d916e81165e93bd1f5b256c7e/7f664/memorySections.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 27.21518987341772%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAFCAIAAADKYVtkAAAACXBIWXMAAAsTAAALEwEAmpwYAAABJklEQVQY0yXIUU+CQAAAYH50r/2BXtxaD64Hc3OGazKmqRMljdlEJMzUpcLQhqBMUOHgOE7ibKvH76MIISlJU5ISQsiF/JNcSBjCCCEUxyiO8fnsef5qvcZJgnHyFwkAASXIgjJXtq6lGqqyUmRdnu8W4Y/PdqSbh0a++sbwckuciZ/aTNtwQ62pGIOlrZony/GobDHLtJipPuUHfEWs0DzdVtp+esjXXq8y5UzxJVfts91xZ7gYLc17pksLam95/LLAzsNU4blQapa4PsdJXGPUqL/X+5r4fdLzNf76jr195HNs76kl1YRxW5yVu5OqtO5MtiPdmRtHytyazsFxj65hbT6mY9ux/cB33L29dzwAPRD6AQQBBGEEQggRhvEZIhwhHMX4F3/W/TUz3Y5xAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;Memory&quot;
+        title=&quot;Memory&quot;
+        src=&quot;/JPerformance/static/9a70a64d916e81165e93bd1f5b256c7e/7f664/memorySections.png&quot;
+        srcset=&quot;/JPerformance/static/9a70a64d916e81165e93bd1f5b256c7e/c26ae/memorySections.png 158w,
+/JPerformance/static/9a70a64d916e81165e93bd1f5b256c7e/6bdcf/memorySections.png 315w,
+/JPerformance/static/9a70a64d916e81165e93bd1f5b256c7e/7f664/memorySections.png 456w&quot;
+        sizes=&quot;(max-width: 456px) 100vw, 456px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;
+At the startup, the VM reserves the entire Java heap in the address space, but doesn’t allocate any physical memory for it unless needed, the space is logically divided into young and old generations.&lt;/p&gt;
+&lt;p&gt;The Young generation consists of eden and two survivor spaces. Most objects are initially allocated in the eden. One survior space is empty at any time, and serves as the destination of live objects in eden and the other survivor space during garbage collection, after a garbage collection, eden and the survivor space are empty.In the next garbage collection, the purpose of the two survivor spaces are exchanged. The one space recently filled is a source of live objects that copied into the other survivor space.Objects are copied between survivor spaces in this way until they’ve been copied a certain number of times or there isn’t enough space left there. These objects are copied into the old region. This process is also called aging.&lt;/p&gt;
+&lt;h3&gt;Performance Considerations&lt;/h3&gt;
+&lt;p&gt;The primary measures of the garbage collection are throughput and latency.
+.Throughput is the percentage of total time not spent in garbage collection considered over long periods of time.
+.Latency is the responsiveness of an application. Consider the right metric for a web server to be throughput because pauses during garbage collection may be tolerable, obscured by network latencies. However in an interactive graphics program, even short pauses affect the user experience.&lt;/p&gt;
+&lt;h3&gt;Throughput and Footprint Measurement&lt;/h3&gt;
+&lt;p&gt;Throughput and footprint are best measured using metrics particular to the application.
+For example, the throughput of a web server may be tested using a client load generator.
+Also in the VM logs with the command &lt;strong&gt;“-verbose:gc”&lt;/strong&gt; prints information about the heap andgarbage collection at each collection for example:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;[15,651s][info ][gc] GC(36) Pause Young (G1 Evacuation Pause) 239M-&gt;57M(307M) (15,646s, 15,651s) 5,048ms.
+[16,162s][info ][gc] GC(37) Pause Young (G1 Evacuation Pause) 238M-&gt;57M(307M) (16,146s, 16,162s) 16,565ms.
+[16,367s][info ][gc] GC(38) Pause Full (System.gc()) 69M-&gt;31M(104M) (16,202s, 16,367s) 164,581ms&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The output shows two young generations followeb by a full collection bacause of the &lt;strong&gt;“System.gc()”&lt;/strong&gt; call.&lt;/p&gt;
+&lt;p&gt;The first line shows 239M-&gt;57M(307M), which means that 239M were usef before the GC and the GC cleared up most of the memory, but 57MB survived. The heap size is 307M, note that the full GC shrinks the heap from 307 MB to 104 MB, the start and end times for the GC are logged as well as the duration (end-start).&lt;/p&gt;</content:encoded></item><item><title><![CDATA[JVM Ergonomics]]></title><description><![CDATA[Is the process by which the Java Virtual Machine and garbage collection heuristics, improve application performance. The JVM provides…]]></description><link>https://github.com/BrahianVT/jvm-ergonomics/</link><guid isPermaLink="false">https://github.com/BrahianVT/jvm-ergonomics/</guid><pubDate>Fri, 25 Jun 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Is the process by which the Java Virtual Machine and garbage collection heuristics, improve application performance.&lt;/p&gt;
+&lt;p&gt;The JVM provides platform-dependent default selections for the garbage collector, heap size and runtime compiler. These selections match the needs of different types of applications while requiring less command-line tuning. In addition, behavior-based tuning dynamically optimizes the sizes of the heap to meet a specified behavior of the application.&lt;/p&gt;
+&lt;h2&gt;Garbage Collector, Heap, and Runtime Compiler Defaults Selections&lt;/h2&gt;
+&lt;p&gt;These are important garbage collector, heap size, and runtime compiler default selections:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Garbage-First (G1) collector&lt;/li&gt;
+&lt;li&gt;The maximum number of GC threads is limited by the heap size and availible CPU resources&lt;/li&gt;
+&lt;li&gt;Initial heap size of 1/64 of physical memory&lt;/li&gt;
+&lt;li&gt;Maximum heap size of 1/4 of physical memory&lt;/li&gt;
+&lt;li&gt;Tiered compiler, using both C1 and C2&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The Java HotSpot VM garbage collectors can be configured to preferentially meet one of the next goals:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Maximum pause-time goal&lt;/li&gt;
+&lt;li&gt;Application throughput&lt;/li&gt;
+&lt;li&gt;Footprint&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Maximum Pause-Time Goal&lt;/h3&gt;
+&lt;p&gt;The pause time is the duration which the garbage collector stops the application and recovers space that’s no longet in use.
+The intent of the maximum pause-time goal is to limit the longest of these pauses. An average time for pauses and a variance on that average is maintained by the garbage collector.
+The average is taken for the start of the execution, but it’s weighted so that more recent pauses count more heavily. If the average plus the variance of the pause-time is greater than the maximum pause-time goal, then the garbage collector
+considers that the goal isn’t being met. The maximum pause-time goal is specified with the command option &lt;em&gt;“XX:MAXGCPauseMillis=nnn”&lt;/em&gt;.
+The garbage collector adjunts the Java heap size and other parameters related to garbage collection in an attempt to keep garbage collection
+pauses shorter than &lt;em&gt;“nnn”&lt;/em&gt;.&lt;/p&gt;
+&lt;h3&gt;Throughput Goal&lt;/h3&gt;
+&lt;p&gt;The throughput goal is measured in terms of the time spent collecting garbage and the time spent outside of the garbage collection.
+The goal is specified by the command-line option &lt;em&gt;“-XX:GCTimeRatio=nnn”&lt;/em&gt;. The ratio of the garbage collection time to application is &lt;em&gt;1/(1+nnn)&lt;/em&gt;.
+For example, &lt;em&gt;“-XX:GCTimeRatio=19”&lt;/em&gt; sets a goal of 1/20th or 5% of the total time for garbage collection.
+The time spent in garbage collection is the total time for all garbage collection induced pauses.If the throughput goal isn’t being met, then one possible action for the garbage collector is to increase the size of the heap so the time spent in the appplication between collection pauses can be longer.&lt;/p&gt;
+&lt;h3&gt;Footprint&lt;/h3&gt;
+&lt;p&gt;If the throughput and maximum pause-time goals have been met, then garbage collector reduces the size of the heap until one goal can’t be met.&lt;/p&gt;
+&lt;h3&gt;Tuning Strategy&lt;/h3&gt;
+&lt;p&gt;The heap grows or shrinks to a size that supports the chosen throughput goal. Don’t choose a maximum value for the heap unless you know that you need a heap greater than the default maximum heap size.
+If the heap grows to its maximum size and the throughput goal isn’t being met, then the maximum heap size is too small for the throughput goal. Set the maximum heap size to a value that’s close to the total physical memory on the platform,
+but doesn´t cause swapping of the application.Execute the application again. If the throughput goal isn’t met, then the goal for the application time is too high for the available memory on the platform.
+If the throughput goal can be met, but the pauses are too long, then select a maximum pause-time goal. Choosing a maximum pause-time goal may mean that your throughput goal won’t be met, so choose values that are an acceptable compromise for
+the application.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[What is a Garbage Collector]]></title><description><![CDATA[The garbage collector (GC) automatically manages the memory in our Java applications, basically it helps us to avoid to deal with the memory…]]></description><link>https://github.com/BrahianVT/garbage-collector/</link><guid isPermaLink="false">https://github.com/BrahianVT/garbage-collector/</guid><pubDate>Sat, 19 Jun 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;The garbage collector (GC) automatically manages the memory in our Java applications, basically it helps us to avoid to deal with the memory by ourselves.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;The garbage collector is responsible for the following operations:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Allocates from and gives back memory to the operating system&lt;/li&gt;
+&lt;li&gt;Hands out that memory to the application as it requests it&lt;/li&gt;
+&lt;li&gt;Determines which parts of the memory is still use by the application&lt;/li&gt;
+&lt;li&gt;Reclaims the unused memory for reuse by the application&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The Java HotSpot garbage collectors employ various techniques to improve the efficiency of these operations:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Use generational scavenging in conjuntion with aging to concentrate their efforts on areas in the heap that most likely contain a lot of reclaimable memory areas.&lt;/li&gt;
+&lt;li&gt;Use multiple threads to aggressively make operations on parallel, or performe some long-running operations in the background concurrent application&lt;/li&gt;
+&lt;li&gt;Try to recover larger contiguous free memory by compacting live objects&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Why Does it Matter?&lt;/h2&gt;
+&lt;p&gt;The Java HotSpot VM provides a selection of garbage collection algorithms to choose from. &lt;strong&gt;When it does matter?&lt;/strong&gt; The application can perform well in the presence of garbage collection with pauses of modest frequency and duration.
+However, specifically for a large class of applications, those with large amounts of data(multiple gigabytes), many thread and high transaction rates it can be the opposite.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 564px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/2ea2871e44f01f2141fd8906b76ef8ed/ba4d9/gcExample.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 63.92405063291139%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAANCAIAAAAmMtkJAAAACXBIWXMAAAsTAAALEwEAmpwYAAABrklEQVQoz21S227bMAz1//9f+1BgSVbsUseXWLZEkTwkNShZA2woQQgkIOpcxCEiiGiapnVdaimViKiKSK39fBa1VmYWESIS5lprznlorYnIdVwKS6bCXCHsqg4093CPiPZViMhARB/jxzxvIojWqloRIWFREWFTNVUwQwQsvQUMWKZpul47sqrmXNZbaXeQiAYLhpGiAoz7hJuHueExfOwpbbeBmad5bo7ldtSKMHvyjGjmAYuqIAUDpMqmCPt2Of349XNw95xz11DLujOzdQD7X2pEc+8mKELgt3TM6zao6p5Sa80NWmnLmukvR4d55/G1Ycw8mFnqw/2GQ02okG6HFu5Cwz6zOx8tnkSilDIA2Pf9+Z6bmRCklsIpa8paxVnc8MkFXdc6Lx+/fw/n83ld13/kteaOgECqcM25HgelvaRD9qxb5kx4eX17eX0bLpeLiPh9GZ7xcKhX7mEapgZRpkcylffv76fTecg5T9MkIiklIiqlzPMMYFmWco/xeoXZNE05ZyIax6sBaduOY+9Lsm3b6XQax/HhhJl18Z9cDGit2f3/IwL3FjAz/wM7HvTWhnx9CwAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;Alt Text&quot;
+        title=&quot;Gargabe Collector performance&quot;
+        src=&quot;/JPerformance/static/2ea2871e44f01f2141fd8906b76ef8ed/ba4d9/gcExample.png&quot;
+        srcset=&quot;/JPerformance/static/2ea2871e44f01f2141fd8906b76ef8ed/c26ae/gcExample.png 158w,
+/JPerformance/static/2ea2871e44f01f2141fd8906b76ef8ed/6bdcf/gcExample.png 315w,
+/JPerformance/static/2ea2871e44f01f2141fd8906b76ef8ed/ba4d9/gcExample.png 564w&quot;
+        sizes=&quot;(max-width: 564px) 100vw, 564px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;The read line (at top) is an application spending only 1% of the time in a garbage collection on an uniprocessor system. The magenta line shows a 10% of the time in garbage collection.&lt;/p&gt;
+&lt;p&gt;The main problem may become with large bottlenecks when scaling up to large systems, for example the previous problems with a waste of 10% of the time with a single thread can lead to a 75% of throughput loss when scaling up to 32 processors.&lt;/p&gt;</content:encoded></item></channel></rss>
