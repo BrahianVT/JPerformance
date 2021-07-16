@@ -1,4 +1,185 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Java Performace]]></title><description><![CDATA[Java blog focus on performace and concurrency]]></description><link>https://github.com/BrahianVT</link><generator>GatsbyJS</generator><lastBuildDate>Tue, 13 Jul 2021 05:32:51 GMT</lastBuildDate><item><title><![CDATA[The Z Garbage Collector]]></title><description><![CDATA[The Z Garbage Collector (ZGC) is a scalable low latency garbage collector. ZGC performs all expensive work concurrently, without stopping…]]></description><link>https://github.com/BrahianVT/z-garbage-collector/</link><guid isPermaLink="false">https://github.com/BrahianVT/z-garbage-collector/</guid><pubDate>Fri, 09 Jul 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;The Z Garbage Collector (ZGC) is a scalable low latency garbage collector. ZGC performs all expensive work concurrently, without stopping
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Java Performace]]></title><description><![CDATA[Java blog focus on performace and concurrency]]></description><link>https://github.com/BrahianVT</link><generator>GatsbyJS</generator><lastBuildDate>Fri, 16 Jul 2021 03:13:30 GMT</lastBuildDate><item><title><![CDATA[Java Memory Model]]></title><description><![CDATA[It is important to understand the Java memory model if you want to design efficiently low latency systems. The Internal Java Memory Model…]]></description><link>https://github.com/BrahianVT/java-memory-model/</link><guid isPermaLink="false">https://github.com/BrahianVT/java-memory-model/</guid><pubDate>Wed, 14 Jul 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;It is important to understand the Java memory model if you want to design efficiently low latency systems.&lt;/p&gt;
+&lt;h2&gt;The Internal Java Memory Model&lt;/h2&gt;
+&lt;p&gt;The Java memory model used internally in the JVM divides memory between thread stacks and the heap. Each thread running
+in the java virtual machine has its own thread stack. The thread stack contains all local variables for each method being
+executed . A thread can only access it’s own thread stack, all the local variables of primitive types are stored on the
+thread stack.&lt;/p&gt;
+&lt;p&gt;The heap contains all objects created in your Java application, regardless of what thread created the object.&lt;/p&gt;
+&lt;p&gt;An object may contain methods and these methods may contain local variables. These local variables are also stored on the thread
+stack, even if the object is store on the heap, the object’s member variables are stored on the heap along with the object itself.
+The static class variables are also stored on the heap along with the class definition.&lt;/p&gt;
+&lt;p&gt;Objects on the heap can be accessed by all threads that jave a reference to the object, if two threads access to an object at the
+same time, they will both have their own copy of the local variables.
+&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 486px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/73a0393e9246be62b1885c1123ae4af8/4ee7f/jmm.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 89.24050632911393%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAASCAYAAABb0P4QAAAACXBIWXMAAA7EAAAOxAGVKw4bAAADrklEQVQ4y22UaW8aZxSF+flRVSlSmzpplQQbMxgDs7LDwLAMi2FW1sCAiUkiRakTqU1ahVj2U4Gx5UR9paNz79XR0Xvuhxu6ub7merPhZvMNNt92/B2+fuP6Qc3maq+9utV/vdNsuLm5IfR5uWSeFJgqMSZSlFdKjKks7LCrFYGFdMpMOWGiCoykYyaKwFiO7niqxphqJwSJGJtPnwh9ngXYpTD+WqNsPudUe4xcfEIk8YhK5xD3tYJdOsLqCHgXKmn9KcnMY1L5XzhO/UTLP8FdKbjSCzYfLreGC+zKEd1ApDM+pWpHMEdxrIWEc67gv8viVqNYZzE68xSt4QmGc0xnmsBeyngrFf9tFk8Js/nzI6Ev8wW94kuk6gGpzDPEzO+kK2HcII+3yONcqPhGjFb9kGTpCXL+BUohTKEuMDzX8ZeFW82d4TayW40weJfFG7cYjCy84RmdbgN/3MHaxqlEca043jqH47fxRj3aZwbdbh1v2sBaSfjq4V3kAKcawV1rOEMTb9DH9bv0rDbezlDeRXb6cZxVFn/YZzRxsew2jttnMGthrcTvDW39iPYsiemmaDoiLU+iP83gzHM4a21n2O8KmJNTGnaCppuiPZCwZxncILP7zA87DCNVDpDyB8iFp2jVP3AWGvZcwbnQ8A2Bdv2IZOlXpNwBYv4Z2dpLnHkaJ9BwLx4Y7iIbEfz3BUaBwySYMHw1wPYdpucDrDcaTlXAcU4ZvC8zDgZMlxP6fg936DBeWfTWMt595PmCQS6Ma0Xpm4f09rBaEex2ZDcf5Q4ZVo5wz46xzSOcVgS3E8XbY2CdMBbDfL3cRl4E9GMpqmKJWqpAXSrRkG9rI1WglipiKjp1sYSRLNxqxOIORjJPOaZRjufwhVM2Hy8J/Ru8opAsEzXfkaifI+tdMtUepc4YwViS0D3Uskn1bECiNiNeC5CKJvl6j7Q54edIlUeRKg1B5uryA6F/ghl6skTSXCPXA9L6GYVan0LDJWUESLpHVu9QbthIxgSxNiNd7lCs9UkbHnJzRaKxwow9MCymdE467xFbF+jdIU17StNfEq+vUJtTql2f3niFZC5JmSv0tofpTCn15iTMt4i9D7Ti2q3hl2CGKciktTZZpUFW1MlJ+o6zSpOsZJAVy+S2vVzfa/a9VCGnmgixEo3nEa62O/x88Zq1IvMmrbLWVNZpbQ+VN5qy4/uZ9lCj3muMp7/RPwxz9fdfhLZHcXtkb3lf3+PH/vp/NXdve2D/A7HquE5H9T4NAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;Internal Memory&quot;
+        title=&quot;Internal Memory&quot;
+        src=&quot;/JPerformance/static/73a0393e9246be62b1885c1123ae4af8/4ee7f/jmm.png&quot;
+        srcset=&quot;/JPerformance/static/73a0393e9246be62b1885c1123ae4af8/c26ae/jmm.png 158w,
+/JPerformance/static/73a0393e9246be62b1885c1123ae4af8/6bdcf/jmm.png 315w,
+/JPerformance/static/73a0393e9246be62b1885c1123ae4af8/4ee7f/jmm.png 486w&quot;
+        sizes=&quot;(max-width: 486px) 100vw, 486px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;h2&gt;Hadware Memory Architecture&lt;/h2&gt;
+&lt;p&gt;Modern hardware memory architecture is somewhat different from the internal java memory model. It’s important to understand the hardware memory architecture too at least in a high level.&lt;/p&gt;
+&lt;p&gt;A modern PC has often 2 or more CPUs, usually the CPU’s have multiple cores too, so it’s possible to have more than one thread running simultaneously. Each CPU contains a set of registers which are essentially in-CPU memory. The CPU can perform operations much faster on these registers that it can perform on variables in main memory.&lt;/p&gt;
+&lt;p&gt;Modern CPUs have a cache memory layer of some size, the CPU cache is memory is somewhere in between the speed of the internal registers and the main memory. All CPUs can access the main memory, the main memory is typically much bigger than the cache memories.&lt;/p&gt;
+&lt;p&gt;When a CPU needs to access main memory it will read part of main memory into its CPU cache. It also read part of the cache into its internal
+registers and then perform operations. When the CPU needs to write the result back to main memory it will flush the value back to main memory.
+&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 452px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/526af1d03f57b6fc3d8b42a7aa800f20/fcb94/jmm2.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 87.9746835443038%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAASCAYAAABb0P4QAAAACXBIWXMAAA7EAAAOxAGVKw4bAAADhUlEQVQ4y42Ua08bVxCG/f9/QaVUVZUWUKtAqqiEEBzAxsbY2PgKBl/2fr/v2l5jbHiqXQLhS9Ue6dGeOXrn1Zw5qyk8PT2x2WxYr9es15uch3z/Eq/fsHk9e9V8z808slVYLpdYlkUYBvi+R+D7JHFEFIavcRAEz/h+fhYGPrMkJspyPC/PtW2b++WSwmJ5T+IaPOlt1nqfldpBbhXxbs95NK9Zy03Wacxm5rJWr9gYA1KxhdQsEk0abIw+j0afyLNYpEsK6f0DoSGAWAa7A1oDtfYX0aAITgcmx9yHFitXArkCTpcn6Ry5usdiVAK7DWIF35BIl6uswhWJJaINLqiclqiflbisVrislGnU6si9C1aRxYOvMO40KBWPuKye0aqdUy+f0qxf4oyuCE2J7LaF+XLFzBIYt6p8+Vrm6OsxW9sf+H3rTz4fnnLTqPAQmax9mU79gv2DbxwcHLG9s8v29gcOi2cogyaRKZIVV0jTFNex8QyZxLVQJrfIkztMTSF2TRxVYDGf5Y/gqCKxazEdDtAlAVtXiW0d31DwXJfMq3C/TJE0m7aQUG5NOKj0OGmO2D9tU+0pXI5DbD9Bc2LaQkyxdsNhpc9pa8LfJ1fUhyZdMUbRs1f+biiqJj0x4qIz5uffdnn3fpdfdz7RvjO5GntYboRqhVzLMSe1Hj/9ssO79x/Z+XhEf+rSFwMk1fxhKKkWrZFLX/CoXE0oXY6otAUGUkBjaOH4Ebod0ho5dCcu5eYd5eaYWk9mIAa0Rw6KZrLMDBeLBY7jEEYJfhijagaSoiFIMn4Q4fkhYRjluH6I6wWIsoqsaDlZXhQnuUfmVVimaV7uQPAYyj7NG4XOyOBG8hkbCXdqxNiYMdJiJsYsp3mt0JtYDKYOQ8nPtXmFL48ylQ0604ChEjJUIkb6jG/VDlu7h3wpXbG9e8je5zP++HTM3n6Z9tjmVk24kZ/1XcFHkPUfPZxIOs2RR1/w6U49eoJPc2hw3pVo3OhUOyIXfSWPs9627qxc05m4uT7r7athmi7yvgmah6A6r4i6h2wESC9fw0fOMAMEzUXUPFQ7QrVDdCdGN0wyr8J8Psc0TRbzJJ8ys+SZbP9vzGcJjm3R73bodbtc93soivr8Y2fjS1EUdMNA1/X/RNN1DMNEEATqF3UqZ1Xq9TqSJLNarShkQ3HzZkj+HzLt4+Mjb9dL/A/yFCPcYl0jgwAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;Internal Memory&quot;
+        title=&quot;Internal Memory&quot;
+        src=&quot;/JPerformance/static/526af1d03f57b6fc3d8b42a7aa800f20/fcb94/jmm2.png&quot;
+        srcset=&quot;/JPerformance/static/526af1d03f57b6fc3d8b42a7aa800f20/c26ae/jmm2.png 158w,
+/JPerformance/static/526af1d03f57b6fc3d8b42a7aa800f20/6bdcf/jmm2.png 315w,
+/JPerformance/static/526af1d03f57b6fc3d8b42a7aa800f20/fcb94/jmm2.png 452w&quot;
+        sizes=&quot;(max-width: 452px) 100vw, 452px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;h2&gt;Mapping between the Java Memory Model and the Hardware Memory Model&lt;/h2&gt;
+&lt;p&gt;The hardware memory architecture does not distinguish between thread stacks and the heap. On the hardware, both the thread stack and the heap  are located in main memory. Parts of the thread stacks and the heap may sometimes be present in the CPU caches and in internal CPU  registers, this illustrated in the image:
+&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 630px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/79079c617bc6e7411ed02987b993d0dd/98314/jmm3.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 46.835443037974684%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAJCAYAAAAywQxIAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAB+0lEQVQoz42SSU8aAQCF5/+f2lPTtIfWVFKpMVFQrGiEMsMwSxEXBFmcGWaFWaEgFqhfU0169iVfvuTdXvIEXpHVes08i1lnHtPA4CEc8TgNWU4jVqlL5t3zO3GZxWMEXxFx9Cpes4bdqODIFbwLEUerEuh1WK1Y/3li7g9IOzX6cgm3WebRbbP07wivK/TqR0Q3VaajW4R2LU9Rfkf+9C2yuoWubpM/fUNRfo9eyZH6Y2bzOWb3mpamUKv+oCGKJM6AzDNQpDpSTaSpKkT2AKFf3UNtbCFLn7mWctxKX5HET+jqF27Od4m9gEk4oWe4tLo2Z1IT7cbECqa44S/kix7n9UtaPQ/TixD0/TKHRY2TkkapoFAqKpRLOkdFjcZ+mci1CaOIgeXzs+NQOJEQLwaYfoYzmSE1+8+d3nExnBChdlxnS/TIN3w+lNp8PO6wI/tsywHfD0Vm4+Bl8sjF9FM6Q5ehHWJ6MZaf0LfG9MyAezfG9iYInb19lJ0DtG//KKDlD9B3C0i5PdTcDpvFgsXDgquuSWuYcDmMOZHaHNeuOKq2OFd7XBkpl8aUOzNAWHouS9ti6YxebFs8OiMWlkFiGvD0xHq9xgsm2H6E7Yc4QfQfN4gxbJ9u3+TeHCG85oebzYYsTUmThDRNXvxMzDRLCXyPzm0bx3H4C7JVgms+bG5AAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;Internal Memory&quot;
+        title=&quot;Internal Memory&quot;
+        src=&quot;/JPerformance/static/79079c617bc6e7411ed02987b993d0dd/f058b/jmm3.png&quot;
+        srcset=&quot;/JPerformance/static/79079c617bc6e7411ed02987b993d0dd/c26ae/jmm3.png 158w,
+/JPerformance/static/79079c617bc6e7411ed02987b993d0dd/6bdcf/jmm3.png 315w,
+/JPerformance/static/79079c617bc6e7411ed02987b993d0dd/f058b/jmm3.png 630w,
+/JPerformance/static/79079c617bc6e7411ed02987b993d0dd/98314/jmm3.png 817w&quot;
+        sizes=&quot;(max-width: 630px) 100vw, 630px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;When the objects and variables are stored in  different memory areas on the hardware, certain problems may occur. The two main problems are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Visibility of thread updates (writes) to shared variables&lt;/li&gt;
+&lt;li&gt;Race conditions when reading, checking and writing shared variables.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Shared Object Visibility&lt;/h2&gt;
+&lt;p&gt;If two or more threads share objects is mandatory to use either volatile declarations or synchronization. When a shared object is initially stored in main memory, a thread running on the CPU reads the object into its CPU cache. And if the CPU cache doesn’t flush the changes back to main memory, the changed version of the shared object is not visible to threads running on other CPUs so each thread may end up with its own copy of the shared object, each copy setting in a different CPU cache.&lt;/p&gt;
+&lt;p&gt;To solve this problem use the keyword &lt;strong&gt;volatile&lt;/strong&gt; and always the variables will be written back to main memory.
+&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 520px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/09c2d84db7cd16274aee61b0421ff75e/69902/jmm4.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 75.31645569620254%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAPCAYAAADkmO9VAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAC8ElEQVQ4y42UWXPbNhRG+f//RadpOk48cR1LSRNvo9iSvEjWYnnRQpOiSIAEQVKidjme0yHlTNP2pQ9n7ndxP1zgPgDGfD4nnWUsmM4WzObLPGZ5Op2RpilpOn0l3a691qfzLdt8zmw2w4gizSqRLPSIeTgi9W0W2s3z5XTMcrVmuVxuyfR0nNcyz1Q5TINhrrMeOgwxYq1gWAH/hmWvxKD0DkZX4FTYaJvNC2w26y0v8KztrT9o4NeKeNcFkDWwy2jlY4y1T9K7on1Z5qFWyem1arj3NVbKYv38wmq12vL8nbUeYreq3F6d81iv5vRadeLeFbESGGnkIzpVjr6e8OVTkTe/vGF/b59G5Rvr8Inl5pnVcpmT6Y22aFW/cfjlkI97e7z99S2Fg894nQsS5WGEoUYIhZQK07Sxhi5KxUgZMZnM+Z7fcJ2T6WzNExrX8+n2nvCkQqkIIQKUUhjSV7TtlONqh51CiXeFM/aPKlzed7h/esD1uwTaRccSz+/TdwY0zQH7hxV2DkrsfDylVDdpWRM84WMIP6BhxtTuHH7/45jdwjlfyxeULvc5uy5y0SxiOh36T20qtc9ct09o96sclW/47cMxHz6dU+/6NPoaT0iMQCmEShDhmKEIeRw4jKTG1wkqUnQHbaQaYloPyMBmkqZ4QYwXJAxskSPUOO/h+342coDpxphuROvRodN36Y80T96EB9uh3jmh3jnl3qzyOGxgegmWGNMdKm7uLB4tH9OLGbjx9obZ3LWepm3F3Npjbq0kpznQvC+ecnB0xG6xyG6hwPuDIn+etWmZUe7v2GPaVpLr667Gcb2soaTWVTT6PxPmsXrrcHknqLZdyq0R502by86I5iDMD/zhb/ZDat0AZ+RhZHPHyQQdJUTxP0nGE+JknMcfhDoiUCF+EKJffdnerIcQAsNxHKSUSCGQ8l+ILeK15nkuZ9/OOD48pHxe/nuPEPhSYts2xnr90+P/H2S/U/arLBaL/9Sy5/kXkglEYBr2Hu0AAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;Internal Memory&quot;
+        title=&quot;Internal Memory&quot;
+        src=&quot;/JPerformance/static/09c2d84db7cd16274aee61b0421ff75e/69902/jmm4.png&quot;
+        srcset=&quot;/JPerformance/static/09c2d84db7cd16274aee61b0421ff75e/c26ae/jmm4.png 158w,
+/JPerformance/static/09c2d84db7cd16274aee61b0421ff75e/6bdcf/jmm4.png 315w,
+/JPerformance/static/09c2d84db7cd16274aee61b0421ff75e/69902/jmm4.png 520w&quot;
+        sizes=&quot;(max-width: 520px) 100vw, 520px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;h2&gt;Race Conditions&lt;/h2&gt;
+&lt;p&gt;If two or more threads updates variables in  a shared object a race condition may occur. For example it two theads read a varible let’s suppose it is 1 and both threads increase by 1 so the final result will be 3, but if there is a race condition the final result will be 2 because each thread will try to write to main memory their own result.
+&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 542px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/03deb5635c5cdb901e055ac3c1fb9e34/c0388/jmm5.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 68.9873417721519%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAOCAYAAAAvxDzwAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAC0klEQVQ4y3WS6W7bRhRG9f4PEaBAixZIE6SxE1u2FTvaZS2hRIlaSImUTFHiMlwkand9ClJu0xToj4M7c+ebg8sls16vCVcxUbxlFW/Z7g9pjdZbotWaKIp+JOml5xs2uz3xdpdmE0fiyvhByG4xYj/vEc9kTLlM/NRN97tgwf5wZL/fnTmc2Cc9s8ve6rPs1/C0JgdLYbdQEcInE0Qrno0qzKv8qZeYlt7zMq3ArMTBVjk+v3A8HFIOzy+cbBWmJbAaLOsXhN3b9O5Jr+IHEZlVFOKOmlx8+sLn6xyXn274cHFLrVxjs9Q4nJ6/T3g8sbPHFL8W+PAxy/V1jo8XWT7fFPBUiTDwyYRhyGqmMFE6DKQGlfw9itTEGsnsxJzDMRHuU9K1mGMOO2hdiXrxAemxiq50WD31CYKATBD4qGZAV7OoSSNaikGrp6MYNk+2II4j4jhmHa/ZbCJmtkdPX1LvqDx2NJrdCX3dSR2+EGQCX9AeCx7qKm9+veSnt7f8fn1PvpmjIeeRRwV0U2GkSzQ6OVpKnnInz8/vsrz57Ypf3t9RVRZImosvvLNwYLgohqDybcSXskxTmdBUGsiDJt3hI65voU4UBlqLoS7THnVpKlNypTbV9pjBLKBvOIhEKITAFSGOCJmaC/TZnPnCxQ932MKjrRToazV6agXD6uMFGzw/xlp6qJMppuXgighXBHieSyYZs6056WNLalI9OpMEn9tSnZv8BVf3f3BXvCRbyFLpGMi6oK25aV6enF9ZW7XPwmRMSXOQdZ+eEdA1/H+4Kba5r424Kytkiz2uHtp8bYzoTESa777mk7WUCN1XoW66aE8u4x/wmC5CDMvHWARME5YhprvGdNbpmfaaS2riSIW2bSO88xf6L0n/b5K9s7RoNRpUyyV6vV76I/87u1wuyaxWKxzXxfO8/8V9rY7jMNbGDAdDDGOK54nvZ65L4voLyKX41B/B/jwAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;Internal Memory&quot;
+        title=&quot;Internal Memory&quot;
+        src=&quot;/JPerformance/static/03deb5635c5cdb901e055ac3c1fb9e34/c0388/jmm5.png&quot;
+        srcset=&quot;/JPerformance/static/03deb5635c5cdb901e055ac3c1fb9e34/c26ae/jmm5.png 158w,
+/JPerformance/static/03deb5635c5cdb901e055ac3c1fb9e34/6bdcf/jmm5.png 315w,
+/JPerformance/static/03deb5635c5cdb901e055ac3c1fb9e34/c0388/jmm5.png 542w&quot;
+        sizes=&quot;(max-width: 542px) 100vw, 542px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;To avoid this use a Java &lt;strong&gt;synchrnized block&lt;/strong&gt; so it guarantees that only one thread can enter a critical section at a given time.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[The Z Garbage Collector]]></title><description><![CDATA[The Z Garbage Collector (ZGC) is a scalable low latency garbage collector. ZGC performs all expensive work concurrently, without stopping…]]></description><link>https://github.com/BrahianVT/z-garbage-collector/</link><guid isPermaLink="false">https://github.com/BrahianVT/z-garbage-collector/</guid><pubDate>Fri, 09 Jul 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;The Z Garbage Collector (ZGC) is a scalable low latency garbage collector. ZGC performs all expensive work concurrently, without stopping
 the execution of application threads for more than 10ms, which makes is suitable for applications which require low latency and/or use
 a very large heap (multi-terabytes).&lt;/p&gt;
 &lt;p&gt;The Z Garbage Collector is available as an experimental feature, and is enabled with the command-line options &lt;strong&gt;-XX:UnlockExperimentalVMOptions&lt;/strong&gt;
