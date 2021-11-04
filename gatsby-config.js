@@ -43,6 +43,18 @@ module.exports = {
               wrapperStyle: `margin-bottom: 1.0725rem`,
             },
           },
+          {
+            resolve: `gatsby-plugin-yandex-metrica`,
+            options: {
+              trackingId: "86264342",
+              clickmap: true,
+              trackLinks: true,
+              accurateTrackBounce: true,
+              trackHash: true,
+              // Detailed recordings of user activity on the site: mouse movement, scrolling, and clicks.
+              webvisor: false,
+            }
+          },
           `gatsby-remark-prismjs`,
           `gatsby-remark-copy-linked-files`,
           `gatsby-remark-smartypants`,
