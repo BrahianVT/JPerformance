@@ -1,6 +1,6 @@
 ---
 title: From monolithic to scaling a System
-date: 2022-05-25T23:45:26.160Z
+date: "2022-05-25"
 description: How is the process of scaling a System
 ---
 ## Scaling a System from monolithic to microservices
