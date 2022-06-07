@@ -1,0 +1,549 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="ie=edge"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/><meta data-react-helmet="true" name="twitter:description" content="How is the process of scaling a System"/><meta data-react-helmet="true" name="twitter:title" content="From monolithic to scaling a System"/><meta data-react-helmet="true" name="twitter:creator" content=""/><meta data-react-helmet="true" name="twitter:card" content="summary"/><meta data-react-helmet="true" property="og:type" content="website"/><meta data-react-helmet="true" property="og:description" content="How is the process of scaling a System"/><meta data-react-helmet="true" property="og:title" content="From monolithic to scaling a System"/><meta data-react-helmet="true" name="description" content="How is the process of scaling a System"/><meta name="theme-color" content="#663399"/><meta name="generator" content="Gatsby 4.15.1"/><style data-href="/JPerformance/styles.2be4b67fdd95e48a5510.css" data-identity="gatsby-global-css">@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:100;src:local("Montserrat Thin "),local("Montserrat-Thin"),url(/JPerformance/static/montserrat-latin-100-8d7d79679b70dbe27172b6460e7a7910.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-100-ec38980a9e0119a379e2a9b3dbb1901a.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:100;src:local("Montserrat Thin italic"),local("Montserrat-Thinitalic"),url(/JPerformance/static/montserrat-latin-100italic-e279051046ba1286706adc886cf1c96b.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-100italic-3b325a3173c8207435cd1b76e19bf501.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:200;src:local("Montserrat Extra Light "),local("Montserrat-Extra Light"),url(/JPerformance/static/montserrat-latin-200-9d266fbbfa6cab7009bd56003b1eeb67.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-200-2d8ba08717110d27122e54c34b8a5798.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:200;src:local("Montserrat Extra Light italic"),local("Montserrat-Extra Lightitalic"),url(/JPerformance/static/montserrat-latin-200italic-6e5b3756583bb2263eb062eae992735e.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-200italic-a0d6f343e4b536c582926255367a57da.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:300;src:local("Montserrat Light "),local("Montserrat-Light"),url(/JPerformance/static/montserrat-latin-300-00b3e893aab5a8fd632d6342eb72551a.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-300-ea303695ceab35f17e7d062f30e0173b.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:300;src:local("Montserrat Light italic"),local("Montserrat-Lightitalic"),url(/JPerformance/static/montserrat-latin-300italic-56f34ea368f6aedf89583d444bbcb227.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-300italic-54b0bf2c8c4c12ffafd803be2466a790.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:400;src:local("Montserrat Regular "),local("Montserrat-Regular"),url(/JPerformance/static/montserrat-latin-400-b71748ae4f80ec8c014def4c5fa8688b.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-400-0659a9f4e90db5cf51b50d005bff1e41.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:400;src:local("Montserrat Regular italic"),local("Montserrat-Regularitalic"),url(/JPerformance/static/montserrat-latin-400italic-6eed6b4cbb809c6efc7aa7ddad6dbe3e.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-400italic-7583622cfde30ae49086d18447ab28e7.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:500;src:local("Montserrat Medium "),local("Montserrat-Medium"),url(/JPerformance/static/montserrat-latin-500-091b209546e16313fd4f4fc36090c757.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-500-edd311588712a96bbf435fad264fff62.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:500;src:local("Montserrat Medium italic"),local("Montserrat-Mediumitalic"),url(/JPerformance/static/montserrat-latin-500italic-c90ced68b46050061d1a41842d6dfb43.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-500italic-5146cbfe02b1deea5dffea27a5f2f998.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:600;src:local("Montserrat SemiBold "),local("Montserrat-SemiBold"),url(/JPerformance/static/montserrat-latin-600-0480d2f8a71f38db8633b84d8722e0c2.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-600-b77863a375260a05dd13f86a1cee598f.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:600;src:local("Montserrat SemiBold italic"),local("Montserrat-SemiBolditalic"),url(/JPerformance/static/montserrat-latin-600italic-cf46ffb11f3a60d7df0567f8851a1d00.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-600italic-c4fcfeeb057724724097167e57bd7801.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:700;src:local("Montserrat Bold "),local("Montserrat-Bold"),url(/JPerformance/static/montserrat-latin-700-7dbcc8a5ea2289d83f657c25b4be6193.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-700-99271a835e1cae8c76ef8bba99a8cc4e.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:700;src:local("Montserrat Bold italic"),local("Montserrat-Bolditalic"),url(/JPerformance/static/montserrat-latin-700italic-c41ad6bdb4bd504a843d546d0a47958d.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-700italic-6779372f04095051c62ed36bc1dcc142.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:800;src:local("Montserrat ExtraBold "),local("Montserrat-ExtraBold"),url(/JPerformance/static/montserrat-latin-800-db9a3e0ba7eaea32e5f55328ace6cf23.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-800-4e3c615967a2360f5db87d2f0fd2456f.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:800;src:local("Montserrat ExtraBold italic"),local("Montserrat-ExtraBolditalic"),url(/JPerformance/static/montserrat-latin-800italic-bf45bfa14805969eda318973947bc42b.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-800italic-fe82abb0bcede51bf724254878e0c374.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:900;src:local("Montserrat Black "),local("Montserrat-Black"),url(/JPerformance/static/montserrat-latin-900-e66c7edc609e24bacbb705175669d814.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-900-8211f418baeb8ec880b80ba3c682f957.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:900;src:local("Montserrat Black italic"),local("Montserrat-Blackitalic"),url(/JPerformance/static/montserrat-latin-900italic-4454c775e48152c1a72510ceed3603e2.woff2) format("woff2"),url(/JPerformance/static/montserrat-latin-900italic-efcaa0f6a82ee0640b83a0916e6e8d68.woff) format("woff")}@font-face{font-display:swap;font-family:Merriweather;font-style:normal;font-weight:300;src:local("Merriweather Light "),local("Merriweather-Light"),url(/JPerformance/static/merriweather-latin-300-fc117160c69a8ea0851b26dd14748ee4.woff2) format("woff2"),url(/JPerformance/static/merriweather-latin-300-58b18067ebbd21fda77b67e73c241d3b.woff) format("woff")}@font-face{font-display:swap;font-family:Merriweather;font-style:italic;font-weight:300;src:local("Merriweather Light italic"),local("Merriweather-Lightitalic"),url(/JPerformance/static/merriweather-latin-300italic-fe29961474f8dbf77c0aa7b9a629e4bc.woff2) format("woff2"),url(/JPerformance/static/merriweather-latin-300italic-23c3f1f88683618a4fb8d265d33d383a.woff) format("woff")}@font-face{font-display:swap;font-family:Merriweather;font-style:normal;font-weight:400;src:local("Merriweather Regular "),local("Merriweather-Regular"),url(/JPerformance/static/merriweather-latin-400-d9479e8023bef9cbd9bf8d6eabd6bf36.woff2) format("woff2"),url(/JPerformance/static/merriweather-latin-400-040426f99ff6e00b86506452e0d1f10b.woff) format("woff")}@font-face{font-display:swap;font-family:Merriweather;font-style:italic;font-weight:400;src:local("Merriweather Regular italic"),local("Merriweather-Regularitalic"),url(/JPerformance/static/merriweather-latin-400italic-2de7bfeaf08fb03d4315d49947f062f7.woff2) format("woff2"),url(/JPerformance/static/merriweather-latin-400italic-79db67aca65f5285964ab332bd65f451.woff) format("woff")}@font-face{font-display:swap;font-family:Merriweather;font-style:normal;font-weight:700;src:local("Merriweather Bold "),local("Merriweather-Bold"),url(/JPerformance/static/merriweather-latin-700-4b08e01d805fa35d7bf777f1b24314ae.woff2) format("woff2"),url(/JPerformance/static/merriweather-latin-700-22fb8afba4ab1f093b6ef9e28a9b6e92.woff) format("woff")}@font-face{font-display:swap;font-family:Merriweather;font-style:italic;font-weight:700;src:local("Merriweather Bold italic"),local("Merriweather-Bolditalic"),url(/JPerformance/static/merriweather-latin-700italic-cd92541b177652fffb6e3b952f1c33f1.woff2) format("woff2"),url(/JPerformance/static/merriweather-latin-700italic-f87f3d87cea0dd0979bfc8ac9ea90243.woff) format("woff")}@font-face{font-display:swap;font-family:Merriweather;font-style:normal;font-weight:900;src:local("Merriweather Black "),local("Merriweather-Black"),url(/JPerformance/static/merriweather-latin-900-f813fc6a4bee46eda5224ac7ebf1b7be.woff2) format("woff2"),url(/JPerformance/static/merriweather-latin-900-5d4e42cb44410674acd99153d57df032.woff) format("woff")}@font-face{font-display:swap;font-family:Merriweather;font-style:italic;font-weight:900;src:local("Merriweather Black italic"),local("Merriweather-Blackitalic"),url(/JPerformance/static/merriweather-latin-900italic-b7901d85486871c1779c0e93ddd85656.woff2) format("woff2"),url(/JPerformance/static/merriweather-latin-900italic-9647f9fdab98756989a8a5550eb205c3.woff) format("woff")}
+
+
+/*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */html{-webkit-text-size-adjust:100%;line-height:1.15}body{margin:0}main{display:block}h1{font-size:2em;margin:.67em 0}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden]{display:none}:root{--maxWidth-none:"none";--maxWidth-xs:20rem;--maxWidth-sm:24rem;--maxWidth-md:28rem;--maxWidth-lg:32rem;--maxWidth-xl:36rem;--maxWidth-2xl:50rem;--maxWidth-3xl:48rem;--maxWidth-4xl:56rem;--maxWidth-full:"100%";--maxWidth-wrapper:var(--maxWidth-2xl);--spacing-px:"1px";--spacing-0:0;--spacing-1:0.25rem;--spacing-2:0.5rem;--spacing-3:0.75rem;--spacing-4:1rem;--spacing-5:1.25rem;--spacing-6:1.5rem;--spacing-8:2rem;--spacing-10:2.5rem;--spacing-12:3rem;--spacing-16:4rem;--spacing-20:5rem;--spacing-24:6rem;--spacing-32:8rem;--fontFamily-sans:Montserrat,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";--fontFamily-serif:"Merriweather","Georgia",Cambria,"Times New Roman",Times,serif;--font-body:var(--fontFamily-serif);--font-heading:var(--fontFamily-sans);--fontWeight-normal:400;--fontWeight-medium:500;--fontWeight-semibold:600;--fontWeight-bold:700;--fontWeight-extrabold:800;--fontWeight-black:900;--fontSize-root:16px;--lineHeight-none:1;--lineHeight-tight:1.1;--lineHeight-normal:1.5;--lineHeight-relaxed:1.625;--fontSize-0:0.833rem;--fontSize-1:1rem;--fontSize-2:1.2rem;--fontSize-3:1.44rem;--fontSize-4:1.728rem;--fontSize-5:2.074rem;--fontSize-6:2.488rem;--fontSize-7:2.986rem;--color-primary:#005b99;--color-text:#2e353f;--color-text-light:#4f5969;--color-heading:#1a202c;--color-heading-black:#000;--color-accent:#d1dce5}*,:after,:before{box-sizing:border-box}html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-size:var(--fontSize-root);line-height:var(--lineHeight-normal)}body{color:var(--color-text);font-family:var(--font-body);font-size:var(--fontSize-1)}footer{padding:var(--spacing-6) var(--spacing-0)}hr{background:var(--color-accent);border:0;height:1px}h1,h2,h3,h4,h5,h6{font-family:var(--font-heading);letter-spacing:-.025em;line-height:var(--lineHeight-tight);margin-bottom:var(--spacing-6);margin-top:var(--spacing-12)}h2,h3,h4,h5,h6{color:var(--color-heading);font-weight:var(--fontWeight-bold)}h1{color:var(--color-heading-black);font-size:var(--fontSize-6);font-weight:var(--fontWeight-black)}h2{font-size:var(--fontSize-5)}h3{font-size:var(--fontSize-4)}h4{font-size:var(--fontSize-3)}h5{font-size:var(--fontSize-2)}h6{font-size:var(--fontSize-1)}h1>a,h2>a,h3>a,h4>a,h5>a,h6>a{color:inherit;text-decoration:none}p{--baseline-multiplier:0.179;--x-height-multiplier:0.35;line-height:var(--lineHeight-relaxed);margin:var(--spacing-0) var(--spacing-0) var(--spacing-8) var(--spacing-0)}ol,p,ul{padding:var(--spacing-0)}ol,ul{list-style-image:none;list-style-position:outside;margin-bottom:var(--spacing-8);margin-left:var(--spacing-0);margin-right:var(--spacing-0)}ol li,ul li{padding-left:var(--spacing-0)}li>p,ol li,ul li{margin-bottom:calc(var(--spacing-8)/2)}li :last-child{margin-bottom:var(--spacing-0)}li>ul{margin-left:var(--spacing-8);margin-top:calc(var(--spacing-8)/2)}blockquote{border-left:var(--spacing-1) solid var(--color-primary);color:var(--color-text-light);font-size:var(--fontSize-2);font-style:italic;margin-bottom:var(--spacing-8);margin-left:calc(var(--spacing-6)*-1);margin-right:var(--spacing-8);padding:var(--spacing-0) var(--spacing-0) var(--spacing-0) var(--spacing-6)}blockquote>:last-child{margin-bottom:var(--spacing-0)}blockquote>ol,blockquote>ul{list-style-position:inside}table{border-collapse:collapse;border-spacing:.25rem;margin-bottom:var(--spacing-8);width:100%}table thead tr th{border-bottom:1px solid var(--color-accent)}a{color:var(--color-primary)}a:focus,a:hover{text-decoration:none}.global-wrapper{margin:var(--spacing-0) auto;max-width:var(--maxWidth-wrapper);padding:var(--spacing-10) var(--spacing-5)}.global-wrapper[data-is-root-path=true] .bio{margin-bottom:var(--spacing-20)}.global-header{margin-bottom:var(--spacing-12)}.main-heading{font-size:var(--fontSize-7);margin:0}.post-list-item{margin-bottom:var(--spacing-8);margin-top:var(--spacing-8)}.post-list-item p{margin-bottom:var(--spacing-0)}.post-list-item h2{color:var(--color-primary);font-size:var(--fontSize-4);margin-bottom:var(--spacing-2);margin-top:var(--spacing-0)}.post-list-item header{margin-bottom:var(--spacing-4)}.header-link-home{font-family:var(--font-heading);font-size:var(--fontSize-2);font-weight:var(--fontWeight-bold);text-decoration:none}.bio{display:flex;margin-bottom:var(--spacing-16)}.bio p,.bio-avatar{margin-bottom:var(--spacing-0)}.bio-avatar{border-radius:100%;margin-right:var(--spacing-4);min-width:50px}.blog-post header h1{margin:var(--spacing-0) var(--spacing-0) var(--spacing-4) var(--spacing-0)}.blog-post header p{font-family:var(--font-heading);font-size:var(--fontSize-2)}.blog-post-nav ul{margin:var(--spacing-0)}.gatsby-highlight{margin-bottom:var(--spacing-8)}@media (max-width:42rem){blockquote{margin-left:var(--spacing-0);padding:var(--spacing-0) var(--spacing-0) var(--spacing-0) var(--spacing-4)}ol,ul{list-style-position:inside}}code[class*=language-],pre[class*=language-]{word-wrap:normal;background:none;color:#000;font-family:Consolas,Monaco,Andale Mono,Ubuntu Mono,monospace;font-size:1em;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none;line-height:1.5;-o-tab-size:4;tab-size:4;text-align:left;text-shadow:0 1px #fff;white-space:pre;word-break:normal;word-spacing:normal}code[class*=language-] ::selection,code[class*=language-]::selection,pre[class*=language-] ::selection,pre[class*=language-]::selection{background:#b3d4fc;text-shadow:none}@media print{code[class*=language-],pre[class*=language-]{text-shadow:none}}pre[class*=language-]{margin:.5em 0;overflow:auto;padding:1em}:not(pre)>code[class*=language-],pre[class*=language-]{background:#f5f2f0}:not(pre)>code[class*=language-]{border-radius:.3em;padding:.1em;white-space:normal}.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#708090}.token.punctuation{color:#999}.token.namespace{opacity:.7}.token.boolean,.token.constant,.token.deleted,.token.number,.token.property,.token.symbol,.token.tag{color:#905}.token.attr-name,.token.builtin,.token.char,.token.inserted,.token.selector,.token.string{color:#690}.language-css .token.string,.style .token.string,.token.entity,.token.operator,.token.url{background:hsla(0,0%,100%,.5);color:#9a6e3a}.token.atrule,.token.attr-value,.token.keyword{color:#07a}.token.class-name,.token.function{color:#dd4a68}.token.important,.token.regex,.token.variable{color:#e90}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.contact-module--contactBody--V5nL-{font-size:2em}.blog-post-module--title--WafZ4{color:blue}</style><style>.gatsby-image-wrapper{position:relative;overflow:hidden}.gatsby-image-wrapper picture.object-fit-polyfill{position:static!important}.gatsby-image-wrapper img{bottom:0;height:100%;left:0;margin:0;max-width:none;padding:0;position:absolute;right:0;top:0;width:100%;object-fit:cover}.gatsby-image-wrapper [data-main-image]{opacity:0;transform:translateZ(0);transition:opacity .25s linear;will-change:opacity}.gatsby-image-wrapper-constrained{display:inline-block;vertical-align:top}</style><noscript><style>.gatsby-image-wrapper noscript [data-main-image]{opacity:1!important}.gatsby-image-wrapper [data-placeholder-image]{opacity:0!important}</style></noscript><script type="module">const e="undefined"!=typeof HTMLImageElement&&"loading"in HTMLImageElement.prototype;e&&document.body.addEventListener("load",(function(e){const t=e.target;if(void 0===t.dataset.mainImage)return;if(void 0===t.dataset.gatsbyImageSsr)return;let a=null,n=t;for(;null===a&&n;)void 0!==n.parentNode.dataset.gatsbyImageWrapper&&(a=n.parentNode),n=n.parentNode;const o=a.querySelector("[data-placeholder-image]"),r=new Image;r.src=t.currentSrc,r.decode().catch((()=>{})).then((()=>{t.style.opacity=1,o&&(o.style.opacity=0,o.style.transition="opacity 500ms linear")}))}),!0);</script><link rel="alternate" type="application/rss+xml" href="/JPerformance/rss.xml"/><link rel="icon" href="/JPerformance/favicon-32x32.png?v=74e943d82452f81f6a0bb0b51ac6785d" type="image/png"/><link rel="manifest" href="/JPerformance/manifest.webmanifest" crossorigin="anonymous"/><link rel="apple-touch-icon" sizes="48x48" href="/JPerformance/icons/icon-48x48.png?v=74e943d82452f81f6a0bb0b51ac6785d"/><link rel="apple-touch-icon" sizes="72x72" href="/JPerformance/icons/icon-72x72.png?v=74e943d82452f81f6a0bb0b51ac6785d"/><link rel="apple-touch-icon" sizes="96x96" href="/JPerformance/icons/icon-96x96.png?v=74e943d82452f81f6a0bb0b51ac6785d"/><link rel="apple-touch-icon" sizes="144x144" href="/JPerformance/icons/icon-144x144.png?v=74e943d82452f81f6a0bb0b51ac6785d"/><link rel="apple-touch-icon" sizes="192x192" href="/JPerformance/icons/icon-192x192.png?v=74e943d82452f81f6a0bb0b51ac6785d"/><link rel="apple-touch-icon" sizes="256x256" href="/JPerformance/icons/icon-256x256.png?v=74e943d82452f81f6a0bb0b51ac6785d"/><link rel="apple-touch-icon" sizes="384x384" href="/JPerformance/icons/icon-384x384.png?v=74e943d82452f81f6a0bb0b51ac6785d"/><link rel="apple-touch-icon" sizes="512x512" href="/JPerformance/icons/icon-512x512.png?v=74e943d82452f81f6a0bb0b51ac6785d"/><title data-react-helmet="true">From monolithic to scaling a System | Java Performace</title></head><body><div id="___gatsby"><div style="outline:none" tabindex="-1" id="gatsby-focus-wrapper"><div class="global-wrapper" data-is-root-path="false"><header class="global-header"><a class="header-link-home" href="/JPerformance/">Java Performace</a></header><main><article class="blog-post" itemscope="" itemType="http://schema.org/Article"><header><h1 itemProp="headline" class="blog-post-module--title--WafZ4">From monolithic to scaling a System</h1><p>May 25, 2022</p></header><section itemProp="articleBody"><h2>Scaling a System from monolithic to microservices</h2>
+<h3>Initial Design</h3>
+<p>To understand  I will use a  example with a fiction example , acne books is an online book store that sells books at acne we started small with web application connect to database standards set up  and that at th beginning worked great.</p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 355px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/JPerformance/static/1bf8552b46b6b890ebd85805d0fba5fd/526ee/1.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 46.202531645569614%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAJCAYAAAAywQxIAAAACXBIWXMAABJ0AAASdAHeZh94AAAB70lEQVQoz3WSzWsTURTF8xe0OvNmJvPy0YWRKk2bLqo7kagUsV2EgDuLKEJrbEsjNZJiEw3Tr9DQJDW1NX7UUrVohVawiCDG0mzqRl0p6N/yk5mYEEUX593HvY/zzr3nukyvicfv+S/suvRJpFfWok86OU+bB2+bF+mXzjvn7pO47EPoGopQUIWKIlRUIZwodNEgMH1mLf7+4KBQaFVaEYZA1VVaDrSgu3VcNllvNMzN7DBxa5DxmRhxa4hEdpjeSBjN0PD4bYVmQ6Fu6vRFz5KZT5EtTTO3aJG4fZ1QTxcuVVOZKIyw8/0pL/bLPNtb4uWnMm++rXMrH0dRVae9OlmdcG51ksqP17z9uumg8nOb85cjtkLB2OwV1qqLzG+kyTxIsLB5h7VqkfFsjEAgQGd3Jx1dHQRthIK0H21nojTKw0qO/FaG4rbFk70CkYFztkLBjcIgG59LFHcyLL+fYendFM+/3CWRj9UUNpvjkxjSIFUe49FujtyrFAtbadb3i0Qv9dVm2H/xFOnVUZL3YyTL10iuXGXy8Qj9A2ccw5wZNrfs1hmyLlCuzrKyO83yxynufbA4HTlRc9l+4JYGbun+A3a+4XKTw/W1CR47wvFwNz0nQxwOHnLyruZW/oW/682kuqEjNM3pwjANZw9/AeVZP8RVtaCrAAAAAElFTkSuQmCC'); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="first version"
+        title="first version"
+        src="/JPerformance/static/1bf8552b46b6b890ebd85805d0fba5fd/526ee/1.png"
+        srcset="/JPerformance/static/1bf8552b46b6b890ebd85805d0fba5fd/c26ae/1.png 158w,
+/JPerformance/static/1bf8552b46b6b890ebd85805d0fba5fd/6bdcf/1.png 315w,
+/JPerformance/static/1bf8552b46b6b890ebd85805d0fba5fd/526ee/1.png 355w"
+        sizes="(max-width: 355px) 100vw, 355px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+  </a>
+    </span></p>
+<h3>Initials problems</h3>
+<p>When we had a few users the user base kept growing we got more and more customers and occasionally we ran into some performance problems in the web application we solved this by adding more instances of the web application to increase the availability and solving the issues that way this worked great for a while.</p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 365px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/JPerformance/static/6f2f7b094f7d81d593314c5d0ac35993/2e8d1/2.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 38.60759493670886%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAICAYAAAD5nd/tAAAACXBIWXMAABJ0AAASdAHeZh94AAACAUlEQVQoz02S7UtTcRTH739g7t7du3vnNt3U0GUQBIVvDEykYIW9ME1IQo0IDOpF1iof1sSZc+rmMufTNmc+4SJtQgRu6jKTfBH+QZ+4Vx29+HDO75wvPw7fc4ThRC/vY6/wz7zGF+vhQ7KX280NFIsmrA4raomKZtPQbKfx/G21n/YUTcFitZxpNIT08Ryrh9OsHcZY/RVj7XeMxVyUm546ik2nn56LC5RoiLJk5K6LLkpdDsyKGVlVEJJ7YRLZCMnsJKndqMHn/SkSOxHqPXWYJNGYTp9CR7WqyKrMszdPWc4kWN1eZGU7yfRyhNob1xDi+THmd8ZJ5aPM/RgjuhkgnguzfjzLo+dtyIpCWXkpDqejgL3MRjg9yNbfJdJHcdJHCbZOUtxr9yDM5AMs7I3yMTPE0KKXwXgP418GSB5M8LC7GafLhftyNVWXqgzcNdVUVlXgT77k0/cAo+u9hDb6md8N4WltRGh63Mjsz2HmDkaYyg4ysx9gOjfEyskkD7qbKCq6UDBfR/dJsSqMbHhZyAcJZwaIbPtI/ZngbvstBMkscaejgSf+Nrr6Wujsb6Wzr4Wu/lau1NagWBRjo/8vRfey4919gl+9hL69Jbjpxbf0guv1VxE0u4ZkNmMSxTMkRFEyctmiFE5FtamFk9GjbJEprbBTWVNOhdtp1HX9P9UfQD7FAgq7AAAAAElFTkSuQmCC'); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="second"
+        title="second"
+        src="/JPerformance/static/6f2f7b094f7d81d593314c5d0ac35993/2e8d1/2.png"
+        srcset="/JPerformance/static/6f2f7b094f7d81d593314c5d0ac35993/c26ae/2.png 158w,
+/JPerformance/static/6f2f7b094f7d81d593314c5d0ac35993/6bdcf/2.png 315w,
+/JPerformance/static/6f2f7b094f7d81d593314c5d0ac35993/2e8d1/2.png 365w"
+        sizes="(max-width: 365px) 100vw, 365px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+  </a>
+    </span></p>
+<h3>Vertical Scaling</h3>
+<p>We got some more performance issues web applications stopped responding and this was caused by slowness in the database we didn’t really find this strange the database was used on every page it was used for everything so obviously if the database was slow the web application would be slow as well we solve this by buying a larger database from a very expensive database vendor.</p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 457px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/JPerformance/static/9813c385178abf00e42803d7f90749e8/34f1d/3.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 43.0379746835443%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAJCAYAAAAywQxIAAAACXBIWXMAABJ0AAASdAHeZh94AAACPklEQVQoz12S60+SYRjG+RcyeF9eQEwQQWipaTZ1ummH2bQsW0mrNV0fytz6YDUsD9OSBCVR5DDUpCmWNWflYSiKgK51Wsv+ol/jhdbWh9+uZ8+e+9p9P/elsJZZsJwwU1JqodhmQlALaPQaNPkapHwJSSfJZ1GjRleg4+Tpcs41N9LafpEr9ks0tzVR21BNsdWEIAkowjEPwXU3oY0xAmsuGlrqOJKXh1avlY2yZiJFJUYCUS87PzZJHcZJ/97Jchgn8TPG2v4KV29dRhFJThJJ+ogkp1g8CDC7PUF9Uw0qUSV3mDFUCipsFRaWDkK8Sc/wNvWK9+mIzLv0PNFEmE+/Frn7pANFOD7G3O4EoU03vg9Ool8COF4+QJTU6Av1MpJWw/FKK8GYi5mdceb2PMzmmEt4CG25WPjso6PHjmJ230Vwe5QXS09wRnuZSY7xyNOFwWjAYjPLGE1GKmrLCe+6mV4fYTTax/hyP+PLA0ysDOHfcLL01U/nQzuKGz2teGMDuFcdMlPxQe702TmqVCLp1PJSlCol5jITwbgT78dBHL5uHk/ew+G7j8PXhWe1n4VvXm73XEORKbBWmLFVWrJ6ykJBUWbM7P9lliOIAtZKM6HkCIHEc1kzBHM6tTXE6+8eOnvbUWSKBLX4D1FArVVnY/M3MpIaQ8kxns53M703hD85TCA1TCD9DH9qWL6b3B7gws3GbIdy3nJoctn7H1ES0RVqKa22UddSxdnrdZy319PQVkPVmXKKbAb5zR84tHlkOEME/AAAAABJRU5ErkJggg=='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="3"
+        title="3"
+        src="/JPerformance/static/9813c385178abf00e42803d7f90749e8/34f1d/3.png"
+        srcset="/JPerformance/static/9813c385178abf00e42803d7f90749e8/c26ae/3.png 158w,
+/JPerformance/static/9813c385178abf00e42803d7f90749e8/6bdcf/3.png 315w,
+/JPerformance/static/9813c385178abf00e42803d7f90749e8/34f1d/3.png 457w"
+        sizes="(max-width: 457px) 100vw, 457px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+  </a>
+    </span></p>
+<h3>Migrating to microservices</h3>
+<p>Business was good and books sells were really high so we could scale the database one or two more times after that we discover that web problems about developing this application was by the monolithic approch so after some analysis and maybe some hype,  we switched to microservices to be able to scale each individual service and to be able to scale development over several services as well.</p>
+<p>We developed  something like this this is a small part of the system we had our web application which our customers used to browse and buy books connected to some services :</p>
+<ul>
+<li>A service for displaying a page with special offers.</li>
+<li>A service for listing the products that we sell.</li>
+<li>A service for making payments this service is run on separate machines made over the wire calls between them and each service had its own storage to to allow to scale storage separately.</li>
+</ul>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 251px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/JPerformance/static/b41752231bc9ab43c5b782b6605d2a8c/26abe/4.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 79.74683544303798%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAQCAYAAAAWGF8bAAAACXBIWXMAABJ0AAASdAHeZh94AAADJElEQVQ4y42T/W8TdRzH+x+wPl571123lnZ9vK7rtde5LYT5QNSkCGyVODZRtIhz4xft2JhoJ4490S2RkOl2nTwYYqDzYYGEJZogAhrB+YPGP+dl7roqRhP2wyvvy93l/f18Pu/P1yI2izwRr8dUz7a6PAIOlwOHy1lXwYnd6cAtubHsyHDbTJIlXG4Xak+KUwujjC2MmIxXTnKyXCQQan2yoWHUqMxgV5OVwlv7Wd+q8umtefTNCvrmIjce6qRzSSziYz//n1nj2eVx4fPLJBSFgZGDrN2tMLX6LmerJZbWy1y6u0RKU+oVSj7pX3h90t9GxlwMs0g8Qq5Lo7lZZt8re1j7eYHFjTPMro9zYbPMZ3dmiKcjWDySB6vdhtVmo8lqNdVA8Aimkdwqo2oqyY6kWbHxXpJFomqIRC6C0hlByUUJKQHzu8UXkBkc6efExFFOnD7K8fEhjp8aQlHjtEXa0J7SCAT9ON1ORFnE5Rbo6FQY/bDI8OQbDE8eY+TMmxRLr9JqhKJko9S2Vrn2YJnljVmu3PmEm39epXDsJfwBP80tXgRRMBM2RmGz2ekv5vnm98+5/ssKNx6uUHu0yldba6Ry7ViSWpTl27Ms1spM6SXmrk2if3+eQ6/l2R0Mks6myWgqalYlk8uQTLYzMNrHxVvTTF+eYKpa4uNLY+jfnSdlpJzIhln4epLpL8eofPs+8+unuXD7I/JH9hGJRgmE6u2ae7hd4fODvXzx2xL6/TmqD+ap/jSPfm+OhBrDYgy464UMT/d1s/dAF70Hu+k90E1rqMUMxKgqnoybaQuSYCbvbZGIZduIa2HiWhuJzjDh1G48XhGLcbLD6cRud2B3/INhYJqIArFEzGzbH/Rjd9qJpcIcGe5n4O06g+8U6Ht9Pz6/b3sPZek/PL7gjfXJ5FSCoRCFYp6NPy6bYdQe6SZGKB1a+86uXmPBDYLBEEOj/VRqH1BefY+ZKxOcXStx8eY50p3t9ZZ3QuNGNe1q4sXBvVz9dZGVH86h35tFvz+D/uMciUxs54YN3KKbQKSFZwrdPPtyj6nPHe5hTz6H5BP5C1+iK3G3Mn0vAAAAAElFTkSuQmCC'); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="4"
+        title="4"
+        src="/JPerformance/static/b41752231bc9ab43c5b782b6605d2a8c/26abe/4.png"
+        srcset="/JPerformance/static/b41752231bc9ab43c5b782b6605d2a8c/c26ae/4.png 158w,
+/JPerformance/static/b41752231bc9ab43c5b782b6605d2a8c/26abe/4.png 251w"
+        sizes="(max-width: 251px) 100vw, 251px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+  </a>
+    </span></p>
+<h3>Problems appear again</h3>
+<p>This worked great but one day the web application was not responding customers, they couldn’t buy any  books we restarted the web application it helped for maybe a minute but then it became non-responsive again , well the web application looks healthy enough but we notice that the special offer service has stopped responding as  well okay that’s no big deal the special offers are in a separate page then just nice to have functionality but if the special offer service is not responding and it  shouldn’t cause the total web app point of failure.</p>
+<p>Okay we continue digging the special offer service is calling a third service a purchase history service to show special offers tuned to the customer’s purchase history and this service has stopped responding as well we had encounter a cascading failure where the failure in this purchase history service had cascaded back to the web application a failure in one part of the system have affected other parts more critical parts if our system so if we compare this to the database case with a database failure affected the web application this is so much worse, because this service is not-critical and it´s stopping the entire system.</p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 389px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/JPerformance/static/9df8245a4e04a400e8fda11588261245/00a4e/5-6.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 52.53164556962025%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAALCAYAAAB/Ca1DAAAACXBIWXMAABJ0AAASdAHeZh94AAACRUlEQVQoz3WSa0sUURzG5yvk7OycObOzV529qBlW5gXU3BLMXQnEW7URYpSWL1RCtMTVWNaCDNeCFTKz8oIiRAjRmwhf1Mf6xczuRoi9+HE453/Oc57/RZGWxMXnYGBU9pbEa+i0dTdz816adKaPZLoT6ZcIn4GwJIZl0JVup/dWDzdGUrRcbUKR/wiUhA13dYSF0FjZeMLu5jyft59S/JInHq8mIHWCUmDHQxT3l9han2LvYJncuzkUwxQIKTDMkpAoi0UtSUTXePZmnK3iBEcbGdYOZknEIlRLQY00iMeCFPZn+bg2yvH+Q7Kb0yhW2E/QDmGFLDeVgE+S8EkilkQzdC52NHB9uJPkYCet3ZfdO7olXYRl0HStkbZUM22pFi601qOsv59nOT9JYS9Hd6qdoKriD/gw/CZeXWNycYy1gxyru8ssFGYIVQcRpsAsl8fj8aCqKlWqiub1ohwdZjnMjfDjJEf/g37C4QiJ8wnqG+qw4zb5nTk+/S6w+fMVxe8viNbabrMqNTf9JmagjF+ijD+/zVR2iKmVDFeSl4jGokTsiOtC07303u1ibHGY0YVBBh6lsII+jHLjKpMhrRJO7RVV83BO06jyePAKr/tjvC5Ooj7hiib7Osg8HuLOxAB9Iz1uvCLorKdRXMtl286MOYe61F2XsUSM/PY8O7/esn1SoHj8Eru2Bt1J2X9q3MooZ/3ijo+vlPLM6n0K37K8/rrA0odpQnYIXYr/O3TSOouSU0E4FiTRaLvU1IX/xhzOevcHuIlpBx9VJCkAAAAASUVORK5CYII='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="problems"
+        title="problems"
+        src="/JPerformance/static/9df8245a4e04a400e8fda11588261245/00a4e/5-6.png"
+        srcset="/JPerformance/static/9df8245a4e04a400e8fda11588261245/c26ae/5-6.png 158w,
+/JPerformance/static/9df8245a4e04a400e8fda11588261245/6bdcf/5-6.png 315w,
+/JPerformance/static/9df8245a4e04a400e8fda11588261245/00a4e/5-6.png 389w"
+        sizes="(max-width: 389px) 100vw, 389px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+  </a>
+    </span></p>
+<h3>Debugging to find the error</h3>
+<p>What happened when the purchase history survey stopped responding and affected all the rest of the system we sorted look at the web application because that is the component we want to save we’re on a standard web container for the web application contains a <strong>thread pool</strong> with a fixed number of threads the <strong>blue boxes</strong> on this imagery illustrates the threads and when the user wants to use a page a request comes in it is assigned one of the threads from the thread pool.</p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 111px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/JPerformance/static/8642237f51af0ef9f4d66979882e35ad/a4766/7.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 213.51351351351352%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAArCAYAAAB4pah1AAAACXBIWXMAABJ0AAASdAHeZh94AAAH20lEQVRIx42W61OT6RmH/QtW0CAQYLefurMz262CdnGnnX5wpt2tWtfVutvpzmhdu22wde26OqKiazjlJCbkCMEkb0h4cwIDSZCT2gSQUJWKrT2Ih+UQYNX+DVfnfYmgrGg//OZ+nsk8V373fb/PYZWyWElhcSFFrxehyM+jfEsZFSf3UXHqt1Sc2k/Fqc+oOJnVqf2oTu7nYNUBDvz5N7z59pvkFRSgLCmSGRJrVWHJAiwvP48NP3kbX8pG57iXjjGBi2NeomOtdN3203XLR3TMS+etVi7e9JC4I6J1f03RG8UUFitRlijlKAOL3yhmdW4Ov1btpHPMi3DZgjjUhP2ijj9+fYDj+sMc0x3ihPEwvqt2/EkbvqSN4GALpZs3oFiXJ5taABYrF4GfqHYSvenFn3IQGHLgHbCiE86gdZ+mprkSrXCatqQdcchO26ADMemk7L3lwBIJWMTq3NV8UvEhHdcF3AMWAsPNBK858V6xyLHjuofAsFN2JrkXh5sQUy2UrgR8Lec1Pj20C3tUz5/OfEa19TiVhsN8WaOiynSUalslx3WHqLaf4Iz5GCcbv8TdZ2Hjj8tQ5L3EoZSKTlSj9pxE7anCGNVyvqMOXbCahvZ6jFEd59s1WDt1tF62sem90kWgcqmGC8A9qh10jwkM9lhI91gZ6bUxIsUeG6N9DtK9dnk80mPn4mAT4qCTTeVLKSuXd/lXFTvoSV/goWjmv+FmHkea+TbokDUfsMvxUaiJ2YCNeL8VX8rBpsUuK58H5jwFjl5gImjlepOGUXsdD0QbDwN2pkNNPAjYuO0yMB120DVgxpeys7G8dHlTloC7K35Jd9rJ/bCNbs0JfFVfIJ49QssxFa7jKmxHfkdce4L5died/Y20SsDN61GsUyylrCxeSnm3ajvxtJN7AQvftFl4IFqYaDNz12vijvs84xcM/KfVxEzYTueACW/K9hxQ2n7P1XBXxTbio07uiY1kwk3829fIPzwN/MtrkmHjTi3z7S1MBix09RsRklY2yjVUvLgpuyq2k0g3M9FmYjbsJFJ7FHflQfynv8B96iBJ4xnm2p0ysLPfhJCyZIEv6HLOosMm7oomZoIO7rgauOcz88Bv5r7fzGTAxnTQxmTQKtdQAm7a/JLPRnIYG21iQgIGrMyFHcyGrGSCkhZg0wEbUwEznQNGhJR1ZYcS8KOK7XSn7QwHvQQTYwS7bxJM3CSUuEE4MUao+yZtl8YZirQT6zuHWwauJ28RKDWleCnlnRXb6Ulb6Q+GqY/PoY9n0D4jXXyG2sQjoqE+4n16XN8BPlvDnBw+Um2je9TGmN9BTLxEp9j9nLrEBBfFXm74Bbr6DM8AFS9uigRMjJgZDngIxG4QjI0SkvVXOYZjacT4DYZCIbp6da8C5rJTtY1LI430BwJoYnNyis9KH5+mNvEtXcEeunq1uKQul6+Ucm6u7DCWtnLLb+NyMM6V0FPFuByKczkcoz/UzXibi2ifBDTLQMVzTXnO4VYSIyaGRTeBbFdD3WOEsh0PdV/Hf2mcwXCEzl4NF1KNL3coAbuvNdAnitTE5tHEZ6mPz1IXm6U+NosmNkNN/DHRYA/RnlpakiY2lm9gXd6Ljq+cXD5UbSWabmS8tZGr/ghX/WEu+0MkxQjJtjBX/UGu+CPcbnXQ3quVgdJOyVu3AnCn6hd0pC08EDQ8ETQ8Eup50qrlrq2KGaeaJ14NjwUNGUFHuFdHS9L4KocS0Mw9Qcu00MCkcI6M38RQQxV3HDVkfEamhHNMefREZIfnZWDeS4GjElDDlMfApKBnUjAw6clGQc+UPJccSsAGyspXPG0k4Ae0p81MZIEPPXoyvvMM1B/hluUMM60NMlxyGO7V0JI8R9nm9c9cAYXLge/TPmJkQqhj2qNjUtDJbuZ9DWRaF5xNCTqmPFrCvXU4k4ZnHCq/63CH6n06JKCnlhn3wsK5VgOjDZX8036WjFcv/9GUR0Owp46mpGGhhisDP5Ad3nPXknHpmHZpmRMM/M14mrv2GjIePdMuHVOu+izw3EuAOQvAcPo89z21zHp0TLs1zLg1PPY3MCe5c9WTcWuZdtcT7K3DkZIc/nDZebgs5Uj6HPddNcy4tLKTea+Bq3VH+HvjaeYEPTMujQwO9tTiSOlfDQyPGHjQcpb5ZjVzzWrmnWq+sVUx3XSGOedZWRmnGrGnGltKR1n5OzJQuRyYm5vL9j/8nMhwHSOeRoKRQULtKUKRJJGOQcLtg/I40DHEtVYXgcRpLH/RLgJlhyXKhStAmkg13Pr7nxEZVHNJcFMbm0cby1Afy1CXjdLhoJauAF+MYKwS85V6yt59B0WeIvskLmRVQVGBDFwtAT/fgpg6y7DTQMDdheiJEshKlHWRNk+M4WYz/tgJTAM1lL77A9bmKZAylViLQMnhts+34L2qZsJ0jHnjUeaMR5g3fsWcPP4qq6PMGI/h7jiOsU9N6Y8WgMqSQgqLsreeNJEejet/+ha23pN0XlLTGVfTlaimKy6NpZhVoppo/CzCYC1VrkO8/r0SCpQFcrqLKUuSJtIbZfPWUvbVfMzemo/ZV72HfdVLca+sPeyt3cPeE7t5q/T7KNatk9c+5ayS6JLylfkUFBWyZu1a1qzJZe3aNStLsUb+zKQ9LEHktVnOqvyifCTJPxTlL1r/f1RQ/NTIwlpJ/wO5hauoOPhGbAAAAABJRU5ErkJggg=='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="seven"
+        title="seven"
+        src="/JPerformance/static/8642237f51af0ef9f4d66979882e35ad/a4766/7.png"
+        srcset="/JPerformance/static/8642237f51af0ef9f4d66979882e35ad/a4766/7.png 111w"
+        sizes="(max-width: 111px) 100vw, 111px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+  </a>
+    </span></p>
+<p>The thread in turn calls the special offer service we want to view that page makes a synchronous call and wasteful response.</p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 364px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/JPerformance/static/43daff38c24a6d7a56279cc18cdb969e/e45a9/8.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 64.55696202531645%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAANCAYAAACpUE5eAAAACXBIWXMAABJ0AAASdAHeZh94AAACY0lEQVQ4y32SW08TURSF+xMotHOfTjtQegEBoxAlmgjBF8XEByXGN/DJ6INK0ASDEAQsAQkqpYU2CFourVVAIBJjYjQxmpAY8fYPeOM/fGamlFuEh3XOZM7e66yz9nLImoziUVB0BftbV7YhqSJ3+q4zmOomMtlBV/QumldDVvfW7YbDWgRJRFSkfWQSuk/j0fP7PJuP8PRNhPjSIGbAh6iIBxNajeGqACUhE0EWd1Rau08lHm/nW+YJXzPDpF8NYAR8SFuX52tVj7oFW6FMdLmDW73NyLKCUWzY6iRZRPAqzI094Fc8wo9oH+9eP0YrNewzi8B+nSzicrtwCS7cojun8NyVOmobqvGaPsoryyirKKM04Efze5ge7+R3KsafVIzl+WHMcj+KlrNEkAXCR4OcrK/hxJnjHKutynnoLCzCJbiRNMn2UvfqFPuL7eJYop/syjqzi99JLySorKkgGA4RPhImVB6ic7SViffDRBcjJFeHcFg+qEbu/XljrX+iLCF6BEbGI6RW/jL19icvs1H0EtWesmEaeHw6vdNtjH/oZyDbwczaiEW4l2h7YqqCbCok4l18yS7zaW6BTGYII+i1h5K7VORs02mu3r7I5ZuNNN24kFO4HzlCGcFUmRltY3Oqn41ED0vpHrSAF3lXxIqKXBQUOHE6C+3dcVCe8oTT0VY2JyNsJB/yNt2NFvBtE+bt0nbhUIWiqZAcucf6iynWJpJkZnvQglZsdgj347+ENhQZ0SsRG2vn89IqHxdWmMlG0Ep1O4cH9dk5PAiCItLQWE3LtXqaW+o4f+kUkiZzWM8/K4a3Ndq8dg0AAAAASUVORK5CYII='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="eight"
+        title="eight"
+        src="/JPerformance/static/43daff38c24a6d7a56279cc18cdb969e/e45a9/8.png"
+        srcset="/JPerformance/static/43daff38c24a6d7a56279cc18cdb969e/c26ae/8.png 158w,
+/JPerformance/static/43daff38c24a6d7a56279cc18cdb969e/6bdcf/8.png 315w,
+/JPerformance/static/43daff38c24a6d7a56279cc18cdb969e/e45a9/8.png 364w"
+        sizes="(max-width: 364px) 100vw, 364px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+  </a>
+    </span></p>
+<p>When all is ok the service returns the user gets its response rate but when the service is not responding then the thread will wait for reply and while waiting for the reply it will be blocked it can’t handle any other requests.</p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 351px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/JPerformance/static/4bdacc05ce661fb5828ad6cfb3171535/7c2a6/9.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 65.18987341772153%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAANCAYAAACpUE5eAAAACXBIWXMAABJ0AAASdAHeZh94AAACgklEQVQ4y32S20sUYRiH9w/o4H4zs7vzfTOrGxTaAQKJzsWueSgoHSOiG2sRPBSVFAWl5u4WdZEapHmqi9QLTTqp1GZkRnWREEHiRdRFdd//8MTM7tpB6+K5et953u+d3+tTlomyJKYtkZaJtE1UWOHXBMdb4gxOd3N9OMHwTA87y7aj6ZpXl5ZE2ovx+W2JbmekmaaMUDM0mq7U0z/ZTudIirsvuiivLsEvBCr/P8KYMtlkZaRmFiusWKkLLqXqmb/fzYfBDmbTfZQ6MU9o5StMbxvpDc/hCaeCITqU2yCJ5KaGFct0weUrjXwe6+Vt11Xmnt2mtDq6IHT7QjKE0DWEJjwCZhBfuTLZYklv5UJLUuQSVhiGxuVkHV+7Esy1nuLj6HVKqmPkeStbBFSIVYWriFXuJuZE2VMVY93Gol//0F01aJteMJGwwjJ0Eq21zDbU86zC4eW1czhOlIgQrI/YWELg1FRwb6qTgZ7zPJjuprE5ji+XssxiZldervu5mDrBw1ef6E9/ZXImzd7KbQhNoyBio/yCg7UVjEwkudN8iNdPz9GQjOOTCzJzITk3lDxD0JKsY/bxBOnBR7x+OsQeZwd+oWEVWOihIGs3FXL49H6O1JVR07SfzbFifG5avyNzKRsabYk4P0Y7+d6bZH7yBlFnFyJ3NrYkaAa9AX5dJ09oGMEAvsW3lBGuMERGONLOt1sJ5ic6skLNEy6cTX7mZLzkw3LxC10yLxQ0tx3ly+gA7/u6eTd+k6iz4w/hUiwpVLZkpe7nQuoYb548Z3xsmumpIUqqtnorqrD8tzCkQvyNW9ACBrvKizlztpKmk/uoP32ANRtWEwgGvPpS37n8BOc+tfHyL5dPAAAAAElFTkSuQmCC'); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="nine"
+        title="nine"
+        src="/JPerformance/static/4bdacc05ce661fb5828ad6cfb3171535/7c2a6/9.png"
+        srcset="/JPerformance/static/4bdacc05ce661fb5828ad6cfb3171535/c26ae/9.png 158w,
+/JPerformance/static/4bdacc05ce661fb5828ad6cfb3171535/6bdcf/9.png 315w,
+/JPerformance/static/4bdacc05ce661fb5828ad6cfb3171535/7c2a6/9.png 351w"
+        sizes="(max-width: 351px) 100vw, 351px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+  </a>
+    </span></p>
+<p>While waiting for the reply it will be blocked it can’t handle any other requests okay so for no big deal where one blocked thread the other threads can still be used for other stuff our users can still browse products and make payments so they don’t notice anything yet but as more and more requests to the special offers page come in more and more threads will be blocked until eventually all threads will be blocked.</p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 403px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/JPerformance/static/bf19c70471e15d0b59cb26e0ec0ced3b/045fd/10.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 56.32911392405063%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAALCAYAAAB/Ca1DAAAACXBIWXMAABJ0AAASdAHeZh94AAACf0lEQVQoz2WSW0tUURiG5wcU5sx2t9dae83oSHkgy1PSUSwwpAxKyzFNTDE0xFOncUazwlLDI53GJKduJuyiNG/CuowoqK6Kki668Kp+xRN7zxRhFw9rwfp41/u93+fxaYmDsAXSlkgtUX6F1/DRHm1m9uUUM4tjDM9F3Te3Tsu/d8M08Pq8LqYw8ZwXgm6VFDW1wEoJ+kyDrnAzyy+mWXo2yXgsggrYCCUQWmJpgbAlpfuLKa/eT/nhcvJ25OI5Jyw+WoJeJcm1JVvspOAG08dApIXVxG0+z08SnxvCDCjXVUBLcqRFSbafu0+v8eRRlOWVKdojzXjSbUGbFDQpSZktqVKSSq0oyDC42n+Gbw9v8TU2Qvx+hKyAYpsSlNqKYinYGfQzdLeDqeshFuKtNHQdx+Nkka4lXi3Y7PxuS7ZrRZmZwY2+Bj4dPcT7ir3MRlsoyvJTKAW5jkPb6UhQeaKCUGcNoc5aSvYW4pG2QKWQbjYSyy/ZaGXQ31vPh/JdvC0sIHa5iZygH1sJMrVkqxL4g5rxxBDxVzMk3tyj7dJpR1C60xXumRS1/YpNpkH/xQZ+3LzA6kAnsYlujCybTCXIdz5VAh3UXJnvZnJpkDsr12nsqcHjhPwvfwTTTB+RcCO/nt9nLTHNg9nLBAKKvNSURWptdleWUlV30CW/KDeZ4Xr+Orx0ip+JCdbmR5mf6WFLasruDqZaHrzTx/TCMPcWx2joqP3foYPSkjTTIHqxju9nT/IlVM3scAubgxohrWTW0iKQrRldCBN7PcLjd5O0huvxWMpiPU6W3gyD6pp9TAw0Mh4+RXP7EUxlIdbVlh0souLYHg4c30NeUQ6/AT6of9GLLGUEAAAAAElFTkSuQmCC'); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="ten"
+        title="ten"
+        src="/JPerformance/static/bf19c70471e15d0b59cb26e0ec0ced3b/045fd/10.png"
+        srcset="/JPerformance/static/bf19c70471e15d0b59cb26e0ec0ced3b/c26ae/10.png 158w,
+/JPerformance/static/bf19c70471e15d0b59cb26e0ec0ced3b/6bdcf/10.png 315w,
+/JPerformance/static/bf19c70471e15d0b59cb26e0ec0ced3b/045fd/10.png 403w"
+        sizes="(max-width: 403px) 100vw, 403px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+  </a>
+    </span></p>
+<p>When all the threads are blocked when additional threads come in they are in queued and this is a really bad situation because even if our service would be would recover and the threads would be unblocked we still have to handle all the queued requests so we really want to avoid in queueing requests okay now we understand what’s happening on quite a low level in our application but the question is why.</p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 404px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/JPerformance/static/c7ebac1e1b9da8379394e08802cfdb9d/494f9/11.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 57.59493670886076%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAMCAYAAABiDJ37AAAACXBIWXMAABJ0AAASdAHeZh94AAADDElEQVQoz02T7W9TZRjGz2cTXXt6enbe+37arpSutpx1hm5YFsogAwWzle5FrFMYI0qjMegI0imbE4cLo0DUEBaiElEa0Gj0gyC4xBg0fpNEv6jx7/iZc0Tihyv38zy5X64r9/UIiq6gmRqqoXpRt3QkOUjp8SIvnTzE4blnmT3WIJaM0q11ezmaqd6PGnpI92rc6N6FUMRCVuUHCUbIoMvvY9/BPVz+/gIrnbe4fPsChf48kix5xR4BU0VWZPyiiBhw4cclJ8wcPEAkHvGmuw+6pdEl+qk9M8Ktq6e5ubbE9c+WyfXnCMpBj52rRtEUNpULPH90ksbLU0wdmSCeiiLMH3+difFx0pk0yXSScCzMw74upqZ389un5/lxdYEfbrTJ9me9huFYCLvHxrZtpppjdG4scmVllus3l3EqDkKh1EfeKRJPJugtPIpTckim0jw3O8q9c/P8Mtfk9odLFCsOsViUbG+WDbkNJGyb7bUKrZVpll4bYam9n3Qxg7ASlNityAR1BctQMWMhlHCYxgtj/FzfxR07yecnZiiPVEgk4iRSCU9FNB6lty/LZLPGeLPO6IG9RBJhhOO6RtXUMQ2NHkPDMTUqXT7mntzC3doI66k0X7QO4VQ3oyjd3lLstI0UDLKnsZOrd9/j0rfv8tF6G2eggPCmqjJsaF7DlKGRsQxsUWRmosrvZ47x69HD3FprkenPIstBkj02VsREDASojg3yTmeO1lqTkx+/Qm8pi3BGVdmr63QbGrqhooZ0HhJFRqd38ndnlT8vnmL92ik2bs4RiUYww+aDLcfSEbY+MeBhYMdjGGEDwWdqSK4V7vvQDOn4RJF9jWH+urLMH+fe4M4ni2za2oeiKJ5tXBOLUoAdtSHe/2qZ1WsLnO0ski/lEFxWmvGvt1wYls4jfj/16WHuHZnkp6FBvj79ItnBPJIUQLM0z6uu5F1Pb+OD795m9ct5zn+zQLGcR3DN/H+4DERJolwt0p7fT/vVOq0Tk0QzMe9n/DfYPdsb42yvb2FbbZChp8pYUZN/ADDGqTwGK+DzAAAAAElFTkSuQmCC'); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="Eleven"
+        title="Eleven"
+        src="/JPerformance/static/c7ebac1e1b9da8379394e08802cfdb9d/494f9/11.png"
+        srcset="/JPerformance/static/c7ebac1e1b9da8379394e08802cfdb9d/c26ae/11.png 158w,
+/JPerformance/static/c7ebac1e1b9da8379394e08802cfdb9d/6bdcf/11.png 315w,
+/JPerformance/static/c7ebac1e1b9da8379394e08802cfdb9d/494f9/11.png 404w"
+        sizes="(max-width: 404px) 100vw, 404px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+  </a>
+    </span></p>
+<p>The code that calls the services looks something like this in this case we create the URL to the special offer service we create a URL connection we open that connection connect it get an input stream and read the response from that stream , but what <strong>why</strong> doesn’t this return, well we realize that connect and read time outs in Java they are typically infinite this will block for an infinite amount of time. </p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 630px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/JPerformance/static/68f40039b249e9fd80a6af6d255d770f/47ff6/12.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 20.253164556962027%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAECAYAAACOXx+WAAAACXBIWXMAABJ0AAASdAHeZh94AAAA10lEQVQY00WPPXaDMBgEuYZtwAaB/j6EhCCI5yLx/S81eZAixTRb7O5UMQWUcTyVwjrNFCbmGNHWoq1BjQPGWYw1eBFGPeLF4bzDOMOgB0Yzoo2mUx3VthfSujPnjbyupJyRfGDnFeUj3aDotUVCYNsyaUnEFC/CHGieDffmTvtqqNuaSpadfHwTv96kbaeUws/nQzkKThyPtqEeNC/taAeDdpZpEvzkkSAX59Oz9FbfqET8tRxjYF0zOWdSSteTZUmXvpGZuu9pesVo9J+i/dc9s7p9XIW/GM522I9u+HMAAAAASUVORK5CYII='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="twelve"
+        title="twelve"
+        src="/JPerformance/static/68f40039b249e9fd80a6af6d255d770f/f058b/12.png"
+        srcset="/JPerformance/static/68f40039b249e9fd80a6af6d255d770f/c26ae/12.png 158w,
+/JPerformance/static/68f40039b249e9fd80a6af6d255d770f/6bdcf/12.png 315w,
+/JPerformance/static/68f40039b249e9fd80a6af6d255d770f/f058b/12.png 630w,
+/JPerformance/static/68f40039b249e9fd80a6af6d255d770f/47ff6/12.png 852w"
+        sizes="(max-width: 630px) 100vw, 630px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+  </a>
+    </span></p>
+<h3>Stability pattern</h3>
+<p>If the service never responds this made us realize the first stability pattern use timeouts, timeouts prevents blocked threads we first are timed out of course I timed out our threads can do other stuff in this particular case we could set the connect timeout.</p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 421px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/JPerformance/static/ca79447b29e64f5072c705fae357d272/092ed/13.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 26.58227848101266%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAFCAYAAABFA8wzAAAACXBIWXMAABJ0AAASdAHeZh94AAABB0lEQVQY0y2QWXKDMBQEuUNssxiDWYQWhMRiIDip3P9WnULJR9d8vak3HY2T57VtKOvprWHdXwzjTO9n9DAipERqg7aWafaM84ibHNMyBaTuqEVN0zW0siWq+xZzOPRuUatFLIa7UxTzQDmdaHInqfYBszl0r1G9QhoZsqxKkntCmqeBKG4LkkmQuJbY1uS+odg7iqUl9U8S/yRbKhKTc8uuXOMLH/GFyz+39EacxaEse2REsrcsxw/DvDKun6zbi/f3m+PrwI2O8lnwqAXPzlC0kkYp+sFg/lFGhSzr8u/Dc/vpYvA2cDqyzmK9xc8+TNPOU4qOvKqphAjehBKB877THWVVhMJfsg2Rt99DtlYAAAAASUVORK5CYII='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="thirteen"
+        title="thirteen"
+        src="/JPerformance/static/ca79447b29e64f5072c705fae357d272/092ed/13.png"
+        srcset="/JPerformance/static/ca79447b29e64f5072c705fae357d272/c26ae/13.png 158w,
+/JPerformance/static/ca79447b29e64f5072c705fae357d272/6bdcf/13.png 315w,
+/JPerformance/static/ca79447b29e64f5072c705fae357d272/092ed/13.png 421w"
+        sizes="(max-width: 421px) 100vw, 421px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+  </a>
+    </span></p>
+<p>Great we introduced timeout at Acme books, timeout for all the service calls things work great for a couple of months perhaps some services that became slow and didn’t respond but the timeouts saved the rest of the system but one day we had to fire again, customers complaining going to buy books had terrible response times, now web application we’re awful throughput okay what’s up now have what we solve these kind of errors where the web application would be slow let’s investigate what’s happening.</p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 427px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/JPerformance/static/220a1f3d6ab4ce6adcd0d0fa30740cf9/a7c74/16.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 54.43037974683544%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAALCAYAAAB/Ca1DAAAACXBIWXMAABJ0AAASdAHeZh94AAACMUlEQVQoz42TTU8TURSG+wcISTszd+58dDotSD9sCzMFjaElKmCMccnChLgwQWFDorJhIRsjaABFjPELohEMIFAhwagk6pLQhSbq3oUrf8VjOhVBYeHiybmLk/e+5573hgzbQFqSag2IGmi6RsZL8uTtFJOLN5jdnKat6BNRFcyoudt7ACHdkkjLoFYl5o6gn+LZ2gQL67eZe32HQtH7P8FMwuRd/xG6/QYUQw8cKppG2k9RWb3H10fjbJWnKXT4KPsE5X7BeMzgclcaP+XQ4JpkGqM4lk6uLU3l5RTf7o9SKU/jdXhEFAUZNdEtA/F7oipCCoQhgnMwcp0mUKvubIntmLiWTuuxLNvPR/g+MUBlfoSOzgJxS+A6Bo6tk3AtLNvAcizi6QbiqURwDlVtWtGa3Z3lRIQg6yVYXl9lrvyFVxvLtJZyqEqYo615Ci0ZEjETR6pcHDrH3cfDTM1c48KVXkK7G5YYf5YiyPiNvF+dYWu+zMe1GVqKOWKuy8lTnRzvOkEqm6auvp6r430sPR3i3cIgw5P9NcG9BLERGkm/ic+LY/x8eJ1PK7fIl/LEYjHyXp5UJklTuilIQ3N7lu6eIqd72vHac4SkLdlLTVCQ9BupvBjlx4Mxtpduki81E46Eg8fXpBbU6mTVy8OKEqAK7QCHtkQVgrQX5836LB9WNtncmKWldBhFUYPY/N1f+wxmdCfYps6/VGNguSa9fWcYGOzh/KWzxA45wYgH9e/lF1FTaEsNKOjqAAAAAElFTkSuQmCC'); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="fourteen"
+        title="fourteen"
+        src="/JPerformance/static/220a1f3d6ab4ce6adcd0d0fa30740cf9/a7c74/16.png"
+        srcset="/JPerformance/static/220a1f3d6ab4ce6adcd0d0fa30740cf9/c26ae/16.png 158w,
+/JPerformance/static/220a1f3d6ab4ce6adcd0d0fa30740cf9/6bdcf/16.png 315w,
+/JPerformance/static/220a1f3d6ab4ce6adcd0d0fa30740cf9/a7c74/16.png 427w"
+        sizes="(max-width: 427px) 100vw, 427px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+  </a>
+    </span></p>
+<p>Thee timeouts seem to be  working well but we notice that the service is called a lot more often that then it usually is, there are a lot of timeouts in fact there are so many timeouts, that it seems that our threads spend most of the time waiting for these timeouts they don’t do much other work at all  so our throughput will  go down , we get a throughput that is lower than the number of incoming requests so say that we have a throughput that  can handle 30 requests per second we have 40 requests per second in coming to the to the web application we can keep up with the load and this will cause requests to being queued .</p>
+<h3>Bulkheads</h3>
+<p>The pattern isolates components from each others to prevent Falls in one component to affect others,  then prevent cascading failures an example of a bulkhead would be to limit the memory usage the allowed memory usage of a process so if it would show a memory leak then it would be allowed to just use up a certain limit and would not eat up all the memory on the machine.</p>
+<p>Limit the number of concurrent calls to a service limit the number of calls from one service to another this will put an upper bound on the number of waiting threads so I will talk about this a bit here if we if we have the web application and the special offer service we can add the bulkhead of size say 2 in front of this service between web application and the special offer service but only this we are saying we will allow at most two requests concurrently from the web application.</p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 310px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/JPerformance/static/d640507c1ec1adeb1607a367354b8c01/5fad2/17.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 77.21518987341771%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAPCAYAAADkmO9VAAAACXBIWXMAABJ0AAASdAHeZh94AAADPklEQVQ4y4WU3W/aZRiG+ydYvr8ZMdLGaJbogYkHPfFwdXXJ3FqLdG3XGWOia/qBa9lKaaFAYR0wVuDHoECgsEIHWW1ThK5dt6ZxiZsxatREjzwx/g+XASqd2ujBnedN3uTKcz/3875tKp0KqULG6bdeY3isn6HRfj76fKClKxYzH08PcmG4B+0pDQq1EpVWhVLTrP9Um1JTv1Rgj0ySroXw5xxk9pa5dyg0lD8UyB1EKD1Lcn6wB5FYhFqvPhHWAMpVcl7uNDAXu8bNew58+Tm8q7PEtpdI1IIkdoLEq35yhwJXJgcQicWodf8BVKgUaI160mk7z0shnhYCHJSDpHaDxGt+ols+IhseMvshBkf7EEn+B6hUKdB06FiL2/g27GHfN8tXd92kdgMIlZu4klYciSmC9x2YP7uAWCo5Bmr+rSbQqKOQmOHnuIengRm+zy8R37lF/KGfQNmJP20lVvEyNNH/N8v1WWr06lZtWdYZtaTjDh4VvqCS32B3LU1iZ5FYzYdwEOTB0qcUtj1csphawHrKdfsvtbfTfiSZUl4HKtEbNcQSblKlrwkXnlEsllmpuRFqPqJ7S+SS18jv+Lg08QHiF2b4Tk8X54be5az5DO+Zu3n9jVePgZH4AunScyLFbygUysSrTqJVD5GHiyRzVjK7XgbGexFLJI3uDMZThB+4SGVuELlrpbgfwfTJ+02gtkNLMjbDQXaNSiLHXlZAqDmJVBe488THunuE3OYcH1r6mkC1EkOngeiGnej8EKvWs+xVp+i92nuccl6w8EfCxa8hGz+mnEQaQCd3nngpuS6T27QfAcUNuxqDhhF7H+OLZiz2i9hCI3R1v90Eqjt0rAqT/Lbi5aewg+/SCyzX5lmuznP7sYf7nstktmyYJi8iroeib4YikUkbQUhUSsRyGTKF7AjYqScbHuN3YZZfgtP8sGIjULU3FKzNsVyeJvbIgWnsfMNya23+qo3zCy9F/YqKmGBlK/sla8kKm+kEt7enuFW5gb9yHd/2daKHTkyj5xCJxNQ/lHqHJ6lNVd8nuYSR4W6yCQ8rgptkfAZXcQzn+jjO4jgL6xPMZq/yZtdpJFIpSq0ShVpxov4EZ31zL3hvjdkAAAAASUVORK5CYII='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="eight"
+        title="eight"
+        src="/JPerformance/static/d640507c1ec1adeb1607a367354b8c01/5fad2/17.png"
+        srcset="/JPerformance/static/d640507c1ec1adeb1607a367354b8c01/c26ae/17.png 158w,
+/JPerformance/static/d640507c1ec1adeb1607a367354b8c01/5fad2/17.png 310w"
+        sizes="(max-width: 310px) 100vw, 310px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+  </a>
+    </span></p>
+<p>We have a bulkhead or two of size two to the special offers service a bulkhead of size four to the product service and about eight of size three to the payment service from the web application and this way in this case we have an upper bound of totally nine waiting threads in the web application we’ll never have more than nine waiting threads do to slow services and this offers great protection against cascading failures our services can behave basically however they want and we are quite well protected but only if our bulkhead sizes are significantly smaller than they request pool size if you have a bulkhead when calling a service that is of size 40 and we only have 50 request threads in our application then we can still block up most of the threads and get bad performance so meter size our pollock heads small we can reason about bulkhead sizes by looking at the peak load when our system is healthy so let’s assume we have 40 requests per second to service and these requests are handled at 0.1 second so this would be a peak load when calling service we have this scenario a suitable bulkhead size would be to multiply these multiply the for two requests per second with the response time of 0.1 seconds and we lead us to a bulking size of four so that would work if we would had a constant load.</p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 394px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/JPerformance/static/c5efcdf7a551ced1e170e27276723bea/cc097/18.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 45.56962025316456%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAJCAYAAAAywQxIAAAACXBIWXMAABJ0AAASdAHeZh94AAAB+0lEQVQoz22R3UuTYRiH37+gg+39fjc3XFNbHYiMV+dyY8OPRXOZomga5Oso54RZzq0Pp2V+JQ3MVpqLoIPIjiIp6IsOOquD/qUr9haxxIMLHp7nvn/c1/0IulunHsOtoxoqsibj8rhY2S+w936L5x/LZJcsugIJAoHTeH0efE0+Sk9u/Hn/VGamZCEcDXS4VDyNHswOEzNksv32Ltvv7rH/7QHFnSxT0TzxaDdBs43Osx1svL7Fo8MVnn3dJF/OIEiKjKIpOFQZv6aQ854k2NFOc6AZURaJpkKkJnu5YPVixttwyA5UQ7EtFF0hfjFMyupjIN1HqCeIML8+zfLjeVarRUbTwxRiTYTMM/hPtdDU4idbslir3mbjxSJj14aoDWA0GP+MREnC4XTaSLKEsPd5k6cf1jn4WWFuLcfcgo6VTtCfGuJcMsHO4X1e/ajw5tcui5XrOCWxLlCzz4bnLw06wlguRXpplMzqBImRGD0jswRaW5E1yVZKTnYzURjkcnGQ+EAYWVU4uvd6BFmV7aLavlSXm87+K/QkeglHOvE2ekmNJ5jKj5NemCB+PkKtvtaoubRjEf6/UBHFE7ZKsD1IJNZF+WCZ6peHvPy+Q35rBqcoork1+1OOQ1B1lXpqwTVVURHRDI2ry5e4uZvhTnWW4emkHWg368fzG2LbNgJEfQIfAAAAAElFTkSuQmCC'); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="sixteen"
+        title="sixteen"
+        src="/JPerformance/static/c5efcdf7a551ced1e170e27276723bea/cc097/18.png"
+        srcset="/JPerformance/static/c5efcdf7a551ced1e170e27276723bea/c26ae/18.png 158w,
+/JPerformance/static/c5efcdf7a551ced1e170e27276723bea/6bdcf/18.png 315w,
+/JPerformance/static/c5efcdf7a551ced1e170e27276723bea/cc097/18.png 394w"
+        sizes="(max-width: 394px) 100vw, 394px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+  </a>
+    </span></p>
+<p>When using thread pool handovers if we have a fixed number of threads and we don’t NQ requests then we get an included bulkhead if we try to call the service when water they have three outstanding service calls then we will fail immediately with an error so this is great we get generic timeouts and bulkheads with the same construct a straightforward way to implement thread pool handovers is to use a standard java thread pool executors here we neutralize it with three three threads the first two threes or the number of threads and we use a synchronous queue now this is important because if you don’t specify the queue to use request will use an unbounded you assume Chris queue will prevent requests from being and queued and we will instead react executions when all the threads are used and when we want to protect our get offers call using this thread pool handover we submit the call to the executor we will get a future in the return wait for this future with our desired timeout in this case one second if we get a rejected execution exception when submitting our job it means that we already have three outstanding calls.</p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 423px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/JPerformance/static/f575a15047835427430c869e5b3ffb26/f687d/20.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 51.89873417721519%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAKCAYAAAC0VX7mAAAACXBIWXMAABJ0AAASdAHeZh94AAABpklEQVQoz22SaY6jMBCFOUUIAYclrAbb2GAD3eme+5/qjaoSpIk0Pz5VyeBXy3NUNRXUrLB/7cziHfweMIcDnbZo5QA5dzDrhMlJrF+WsX6G31Zoq1HVFUiHiG7ihizP0PQN+rFH3dWYzIRRSTzaCm3foGgE8kZAPFLkTYa8zXB/CBYQRYZrekWSJUzUyQ7hCC8RPUKqkePsDFcf1IhH2yDJbkjSBFfilrzzlxA1dRLRISXDNEAqiXZoOR+URFmX6MoUshYQefoSEK9O4jTGeffsjgXPg/gWo2pKSGOh3AY1rzCzwe/zgHcGPqxwq8MaVhhrYJzBdmw8DU1XPAouEJ3KVV3CLrRsh0nVMDKHWwb4b49ed9DrhP1ngw0aZtF4/nlygfSesgcUeYenIJniNw8XLEyYoL3C8m1fQk8PtxmYoOB2A7MoLj6MPUQhPnYZncuk3dEIzltoL6GDhNs17KE4LmHB4hf0sud/CXoV9/L+YQx3SO3Sh27o2JBWtkwnW/RTz2aNWr5fgWQhNm4a+N7HsznnJ/VLcnkTv7n8FzKQoJzE/uUvrSofcvy01EsAAAAASUVORK5CYII='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="ten"
+        title="ten"
+        src="/JPerformance/static/f575a15047835427430c869e5b3ffb26/f687d/20.png"
+        srcset="/JPerformance/static/f575a15047835427430c869e5b3ffb26/c26ae/20.png 158w,
+/JPerformance/static/f575a15047835427430c869e5b3ffb26/6bdcf/20.png 315w,
+/JPerformance/static/f575a15047835427430c869e5b3ffb26/f687d/20.png 423w"
+        sizes="(max-width: 423px) 100vw, 423px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+  </a>
+    </span></p>
+<h3></h3>
+<h3>Monitoring and troubleshooting</h3>
+<p>We probably need to throw in some monitoring here to be able to get a better understanding of our system but what should we monitor yeah of course obvious stuff like heaps , CPU utilization, but what is specific for a microservices architecture , we discovered that a great place to introduce monitoring is to monitor the service calls we have a lot of services to get a good understanding of them we can monitor how they are called this our integration points these are the places were integrating the system with with itself it’s also a good place to detect configuration problems if we protect all our service course with these stability patterns so we need to monitor that we have configured these patterns correctly a crucial thing to measure is the timeout rate the rate at which calls to service or timing out that’s a good problem detector and it is also a good place to validate.</p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 411px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/JPerformance/static/b397e1a97c84d164cb7de0d11a5ddb29/2a432/21.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 34.810126582278485%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAHCAYAAAAIy204AAAACXBIWXMAABJ0AAASdAHeZh94AAABEklEQVQoz32RaW6DMBBGfYgkEHYoSoA2C2ULiyFFJGmk3v86XzWjUjmp1B9PHuzHeDwj9scd+nOP4lSirEvkVY6iKrC21jBs4xfd1HFI95CDRNPV7BFVU+H4fkDd1kizFMJ2LSS7hIleI2yTLaIk+pOQvr0Xjx1yyYvf4od4E28gSF5oC6zWK0YzNIYSzEnVdakvGdVXY0El37/u6D8GNLKFHDp0fQd5lsjLjCXTNngtqhyX24RhHNDKBsWpYI+wXIsvFKZjIggDOL4D27MZOnR+YrU62g9CH37ow/Vd/oegVsyOmDdJfkjoO6DL1F5STJXSgJ6ZPUGTun5ekZUZuqHDeBn5KdNt4gFQArWP/0EVfgN/EceixBMUSgAAAABJRU5ErkJggg=='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="Eighteen"
+        title="Eighteen"
+        src="/JPerformance/static/b397e1a97c84d164cb7de0d11a5ddb29/2a432/21.png"
+        srcset="/JPerformance/static/b397e1a97c84d164cb7de0d11a5ddb29/c26ae/21.png 158w,
+/JPerformance/static/b397e1a97c84d164cb7de0d11a5ddb29/6bdcf/21.png 315w,
+/JPerformance/static/b397e1a97c84d164cb7de0d11a5ddb29/2a432/21.png 411w"
+        sizes="(max-width: 411px) 100vw, 411px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+  </a>
+    </span></p>
+<p>The developers over at Netflix has made some awesome stuff for example , hystrix implements these patterns it implements circuit breakers red pool handovers bulkheads it’s actually quite great.</p>
+<p>Well maybe in 2022 some Netflix libraries are in maintenance mode now, but there are another options such as some pivotal’s libraries and another frameworks such as Micronaut.</p></section><hr/><footer><div class="bio"><div data-gatsby-image-wrapper="" style="width:50px;height:50px" class="gatsby-image-wrapper bio-avatar"><div aria-hidden="true" data-placeholder-image="" style="opacity:1;transition:opacity 500ms linear;background-color:#f8f8f8;width:50px;height:50px;position:relative"></div><picture><source type="image/avif" data-srcset="/JPerformance/static/b394b3864420cc2067967d4b42ef6b5a/d4bf4/profile-pic.avif 50w,/JPerformance/static/b394b3864420cc2067967d4b42ef6b5a/ee81f/profile-pic.avif 100w" sizes="50px"/><source type="image/webp" data-srcset="/JPerformance/static/b394b3864420cc2067967d4b42ef6b5a/3faea/profile-pic.webp 50w,/JPerformance/static/b394b3864420cc2067967d4b42ef6b5a/6a679/profile-pic.webp 100w" sizes="50px"/><img data-gatsby-image-ssr="" layout="fixed" data-main-image="" style="opacity:0" sizes="50px" decoding="async" loading="lazy" data-src="/JPerformance/static/b394b3864420cc2067967d4b42ef6b5a/d24ee/profile-pic.jpg" data-srcset="/JPerformance/static/b394b3864420cc2067967d4b42ef6b5a/d24ee/profile-pic.jpg 50w,/JPerformance/static/b394b3864420cc2067967d4b42ef6b5a/64618/profile-pic.jpg 100w" alt="Profile picture"/></picture><noscript><picture><source type="image/avif" srcSet="/JPerformance/static/b394b3864420cc2067967d4b42ef6b5a/d4bf4/profile-pic.avif 50w,/JPerformance/static/b394b3864420cc2067967d4b42ef6b5a/ee81f/profile-pic.avif 100w" sizes="50px"/><source type="image/webp" srcSet="/JPerformance/static/b394b3864420cc2067967d4b42ef6b5a/3faea/profile-pic.webp 50w,/JPerformance/static/b394b3864420cc2067967d4b42ef6b5a/6a679/profile-pic.webp 100w" sizes="50px"/><img data-gatsby-image-ssr="" layout="fixed" data-main-image="" style="opacity:0" sizes="50px" decoding="async" loading="lazy" src="/JPerformance/static/b394b3864420cc2067967d4b42ef6b5a/d24ee/profile-pic.jpg" srcSet="/JPerformance/static/b394b3864420cc2067967d4b42ef6b5a/d24ee/profile-pic.jpg 50w,/JPerformance/static/b394b3864420cc2067967d4b42ef6b5a/64618/profile-pic.jpg 100w" alt="Profile picture"/></picture></noscript><script type="module">const t="undefined"!=typeof HTMLImageElement&&"loading"in HTMLImageElement.prototype;if(t){const t=document.querySelectorAll("img[data-main-image]");for(let e of t){e.dataset.src&&(e.setAttribute("src",e.dataset.src),e.removeAttribute("data-src")),e.dataset.srcset&&(e.setAttribute("srcset",e.dataset.srcset),e.removeAttribute("data-srcset"));const t=e.parentNode.querySelectorAll("source[data-srcset]");for(let e of t)e.setAttribute("srcset",e.dataset.srcset),e.removeAttribute("data-srcset");e.complete&&(e.style.opacity=1,e.parentNode.parentNode.querySelector("[data-placeholder-image]").style.opacity=0)}}</script></div><p>Written by <strong>Brahian Velazquez</strong> <!-- -->Java blog focus on performace and concurrency<!-- --> <a href="https://github.com/BrahianVT">You should follow them on GitHub</a>  or  <a class="header-link-home" href="/JPerformance/contact"> Contact Here</a></p></div></footer></article><nav class="blog-post-nav"><ul style="display:flex;flex-wrap:wrap;justify-content:space-between;list-style:none;padding:0"><li><a rel="prev" href="/JPerformance/java-memory-model/">← <!-- -->Java Memory Model</a></li><li></li></ul></nav></main><footer>© <!-- -->2022</footer></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script>(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(86264342,"init",{"clickmap":true,"trackLinks":true,"accurateTrackBounce":true,"webvisor":false,"trackHash":true});</script><noscript><div><img src="https://mc.yandex.ru/watch/86264342" style="position:absolute;left:-9999px" alt=""/></div></noscript><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/from-monolithic-to-scaling-a-system/";window.___webpackCompilationHash="c618a6c0c01e58cc37e9";/*]]>*/</script><script id="gatsby-chunk-mapping">/*<![CDATA[*/window.___chunkMapping={"polyfill":["/polyfill-67664a8ccc6c9f02b880.js"],"app":["/app-a231f776538fd39e501b.js"],"component---src-pages-404-js":["/component---src-pages-404-js-27981ca7dd461cb4280e.js"],"component---src-pages-about-js":["/component---src-pages-about-js-ec27cafeb25a5f25c150.js"],"component---src-pages-contact-js":["/component---src-pages-contact-js-516b020d0b7954f03cfb.js"],"component---src-pages-index-js":["/component---src-pages-index-js-b96844d44d9f4ab181ff.js"],"component---src-pages-using-typescript-tsx":["/component---src-pages-using-typescript-tsx-f72656945a5506048255.js"],"component---src-templates-blog-post-js":["/component---src-templates-blog-post-js-bd77bca89e9d54badfc4.js"]};/*]]>*/</script><script src="/JPerformance/polyfill-67664a8ccc6c9f02b880.js" nomodule=""></script><script src="/JPerformance/app-a231f776538fd39e501b.js" async=""></script><script src="/JPerformance/532a2f07-787883e842aaa757a8ba.js" async=""></script><script src="/JPerformance/framework-cd9ba813abf39352e631.js" async=""></script><script src="/JPerformance/webpack-runtime-3fcccdac340c8e138d50.js" async=""></script></body></html>

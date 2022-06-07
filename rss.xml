@@ -1,4 +1,549 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Java Performace]]></title><description><![CDATA[Java blog focus on performace and concurrency]]></description><link>https://github.com/BrahianVT</link><generator>GatsbyJS</generator><lastBuildDate>Thu, 04 Nov 2021 04:39:36 GMT</lastBuildDate><item><title><![CDATA[Java Memory Model]]></title><description><![CDATA[It is important to understand the Java memory model if you want to design efficiently low latency systems. The Internal Java Memory Model…]]></description><link>https://github.com/BrahianVT/java-memory-model/</link><guid isPermaLink="false">https://github.com/BrahianVT/java-memory-model/</guid><pubDate>Wed, 14 Jul 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;It is important to understand the Java memory model if you want to design efficiently low latency systems.&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Java Performace]]></title><description><![CDATA[Java blog focus on performace and concurrency]]></description><link>https://github.com/BrahianVT</link><generator>GatsbyJS</generator><lastBuildDate>Tue, 07 Jun 2022 01:11:47 GMT</lastBuildDate><item><title><![CDATA[From monolithic to scaling a System]]></title><description><![CDATA[Scaling a System from monolithic to microservices Initial Design To understand  I will use a  example with a fiction example , acne books is…]]></description><link>https://github.com/BrahianVT/from-monolithic-to-scaling-a-system/</link><guid isPermaLink="false">https://github.com/BrahianVT/from-monolithic-to-scaling-a-system/</guid><pubDate>Wed, 25 May 2022 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;Scaling a System from monolithic to microservices&lt;/h2&gt;
+&lt;h3&gt;Initial Design&lt;/h3&gt;
+&lt;p&gt;To understand  I will use a  example with a fiction example , acne books is an online book store that sells books at acne we started small with web application connect to database standards set up  and that at th beginning worked great.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 355px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/1bf8552b46b6b890ebd85805d0fba5fd/526ee/1.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 46.202531645569614%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAJCAYAAAAywQxIAAAACXBIWXMAABJ0AAASdAHeZh94AAAB70lEQVQoz3WSzWsTURTF8xe0OvNmJvPy0YWRKk2bLqo7kagUsV2EgDuLKEJrbEsjNZJiEw3Tr9DQJDW1NX7UUrVohVawiCDG0mzqRl0p6N/yk5mYEEUX593HvY/zzr3nukyvicfv+S/suvRJpFfWok86OU+bB2+bF+mXzjvn7pO47EPoGopQUIWKIlRUIZwodNEgMH1mLf7+4KBQaFVaEYZA1VVaDrSgu3VcNllvNMzN7DBxa5DxmRhxa4hEdpjeSBjN0PD4bYVmQ6Fu6vRFz5KZT5EtTTO3aJG4fZ1QTxcuVVOZKIyw8/0pL/bLPNtb4uWnMm++rXMrH0dRVae9OlmdcG51ksqP17z9uumg8nOb85cjtkLB2OwV1qqLzG+kyTxIsLB5h7VqkfFsjEAgQGd3Jx1dHQRthIK0H21nojTKw0qO/FaG4rbFk70CkYFztkLBjcIgG59LFHcyLL+fYendFM+/3CWRj9UUNpvjkxjSIFUe49FujtyrFAtbadb3i0Qv9dVm2H/xFOnVUZL3YyTL10iuXGXy8Qj9A2ccw5wZNrfs1hmyLlCuzrKyO83yxynufbA4HTlRc9l+4JYGbun+A3a+4XKTw/W1CR47wvFwNz0nQxwOHnLyruZW/oW/682kuqEjNM3pwjANZw9/AeVZP8RVtaCrAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;first version&quot;
+        title=&quot;first version&quot;
+        src=&quot;/JPerformance/static/1bf8552b46b6b890ebd85805d0fba5fd/526ee/1.png&quot;
+        srcset=&quot;/JPerformance/static/1bf8552b46b6b890ebd85805d0fba5fd/c26ae/1.png 158w,
+/JPerformance/static/1bf8552b46b6b890ebd85805d0fba5fd/6bdcf/1.png 315w,
+/JPerformance/static/1bf8552b46b6b890ebd85805d0fba5fd/526ee/1.png 355w&quot;
+        sizes=&quot;(max-width: 355px) 100vw, 355px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;h3&gt;Initials problems&lt;/h3&gt;
+&lt;p&gt;When we had a few users the user base kept growing we got more and more customers and occasionally we ran into some performance problems in the web application we solved this by adding more instances of the web application to increase the availability and solving the issues that way this worked great for a while.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 365px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/6f2f7b094f7d81d593314c5d0ac35993/2e8d1/2.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 38.60759493670886%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAICAYAAAD5nd/tAAAACXBIWXMAABJ0AAASdAHeZh94AAACAUlEQVQoz02S7UtTcRTH739g7t7du3vnNt3U0GUQBIVvDEykYIW9ME1IQo0IDOpF1iof1sSZc+rmMufTNmc+4SJtQgRu6jKTfBH+QZ+4Vx29+HDO75wvPw7fc4ThRC/vY6/wz7zGF+vhQ7KX280NFIsmrA4raomKZtPQbKfx/G21n/YUTcFitZxpNIT08Ryrh9OsHcZY/RVj7XeMxVyUm546ik2nn56LC5RoiLJk5K6LLkpdDsyKGVlVEJJ7YRLZCMnsJKndqMHn/SkSOxHqPXWYJNGYTp9CR7WqyKrMszdPWc4kWN1eZGU7yfRyhNob1xDi+THmd8ZJ5aPM/RgjuhkgnguzfjzLo+dtyIpCWXkpDqejgL3MRjg9yNbfJdJHcdJHCbZOUtxr9yDM5AMs7I3yMTPE0KKXwXgP418GSB5M8LC7GafLhftyNVWXqgzcNdVUVlXgT77k0/cAo+u9hDb6md8N4WltRGh63Mjsz2HmDkaYyg4ysx9gOjfEyskkD7qbKCq6UDBfR/dJsSqMbHhZyAcJZwaIbPtI/ZngbvstBMkscaejgSf+Nrr6Wujsb6Wzr4Wu/lau1NagWBRjo/8vRfey4919gl+9hL69Jbjpxbf0guv1VxE0u4ZkNmMSxTMkRFEyctmiFE5FtamFk9GjbJEprbBTWVNOhdtp1HX9P9UfQD7FAgq7AAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;second&quot;
+        title=&quot;second&quot;
+        src=&quot;/JPerformance/static/6f2f7b094f7d81d593314c5d0ac35993/2e8d1/2.png&quot;
+        srcset=&quot;/JPerformance/static/6f2f7b094f7d81d593314c5d0ac35993/c26ae/2.png 158w,
+/JPerformance/static/6f2f7b094f7d81d593314c5d0ac35993/6bdcf/2.png 315w,
+/JPerformance/static/6f2f7b094f7d81d593314c5d0ac35993/2e8d1/2.png 365w&quot;
+        sizes=&quot;(max-width: 365px) 100vw, 365px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;h3&gt;Vertical Scaling&lt;/h3&gt;
+&lt;p&gt;We got some more performance issues web applications stopped responding and this was caused by slowness in the database we didn’t really find this strange the database was used on every page it was used for everything so obviously if the database was slow the web application would be slow as well we solve this by buying a larger database from a very expensive database vendor.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 457px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/9813c385178abf00e42803d7f90749e8/34f1d/3.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 43.0379746835443%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAJCAYAAAAywQxIAAAACXBIWXMAABJ0AAASdAHeZh94AAACPklEQVQoz12S60+SYRjG+RcyeF9eQEwQQWipaTZ1ummH2bQsW0mrNV0fytz6YDUsD9OSBCVR5DDUpCmWNWflYSiKgK51Wsv+ol/jhdbWh9+uZ8+e+9p9P/elsJZZsJwwU1JqodhmQlALaPQaNPkapHwJSSfJZ1GjRleg4+Tpcs41N9LafpEr9ks0tzVR21BNsdWEIAkowjEPwXU3oY0xAmsuGlrqOJKXh1avlY2yZiJFJUYCUS87PzZJHcZJ/97Jchgn8TPG2v4KV29dRhFJThJJ+ogkp1g8CDC7PUF9Uw0qUSV3mDFUCipsFRaWDkK8Sc/wNvWK9+mIzLv0PNFEmE+/Frn7pANFOD7G3O4EoU03vg9Ool8COF4+QJTU6Av1MpJWw/FKK8GYi5mdceb2PMzmmEt4CG25WPjso6PHjmJ230Vwe5QXS09wRnuZSY7xyNOFwWjAYjPLGE1GKmrLCe+6mV4fYTTax/hyP+PLA0ysDOHfcLL01U/nQzuKGz2teGMDuFcdMlPxQe702TmqVCLp1PJSlCol5jITwbgT78dBHL5uHk/ew+G7j8PXhWe1n4VvXm73XEORKbBWmLFVWrJ6ykJBUWbM7P9lliOIAtZKM6HkCIHEc1kzBHM6tTXE6+8eOnvbUWSKBLX4D1FArVVnY/M3MpIaQ8kxns53M703hD85TCA1TCD9DH9qWL6b3B7gws3GbIdy3nJoctn7H1ES0RVqKa22UddSxdnrdZy319PQVkPVmXKKbAb5zR84tHlkOEME/AAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;3&quot;
+        title=&quot;3&quot;
+        src=&quot;/JPerformance/static/9813c385178abf00e42803d7f90749e8/34f1d/3.png&quot;
+        srcset=&quot;/JPerformance/static/9813c385178abf00e42803d7f90749e8/c26ae/3.png 158w,
+/JPerformance/static/9813c385178abf00e42803d7f90749e8/6bdcf/3.png 315w,
+/JPerformance/static/9813c385178abf00e42803d7f90749e8/34f1d/3.png 457w&quot;
+        sizes=&quot;(max-width: 457px) 100vw, 457px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;h3&gt;Migrating to microservices&lt;/h3&gt;
+&lt;p&gt;Business was good and books sells were really high so we could scale the database one or two more times after that we discover that web problems about developing this application was by the monolithic approch so after some analysis and maybe some hype,  we switched to microservices to be able to scale each individual service and to be able to scale development over several services as well.&lt;/p&gt;
+&lt;p&gt;We developed  something like this this is a small part of the system we had our web application which our customers used to browse and buy books connected to some services :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A service for displaying a page with special offers.&lt;/li&gt;
+&lt;li&gt;A service for listing the products that we sell.&lt;/li&gt;
+&lt;li&gt;A service for making payments this service is run on separate machines made over the wire calls between them and each service had its own storage to to allow to scale storage separately.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 251px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/b41752231bc9ab43c5b782b6605d2a8c/26abe/4.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 79.74683544303798%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAQCAYAAAAWGF8bAAAACXBIWXMAABJ0AAASdAHeZh94AAADJElEQVQ4y42T/W8TdRzH+x+wPl571123lnZ9vK7rtde5LYT5QNSkCGyVODZRtIhz4xft2JhoJ4490S2RkOl2nTwYYqDzYYGEJZogAhrB+YPGP+dl7roqRhP2wyvvy93l/f18Pu/P1yI2izwRr8dUz7a6PAIOlwOHy1lXwYnd6cAtubHsyHDbTJIlXG4Xak+KUwujjC2MmIxXTnKyXCQQan2yoWHUqMxgV5OVwlv7Wd+q8umtefTNCvrmIjce6qRzSSziYz//n1nj2eVx4fPLJBSFgZGDrN2tMLX6LmerJZbWy1y6u0RKU+oVSj7pX3h90t9GxlwMs0g8Qq5Lo7lZZt8re1j7eYHFjTPMro9zYbPMZ3dmiKcjWDySB6vdhtVmo8lqNdVA8Aimkdwqo2oqyY6kWbHxXpJFomqIRC6C0hlByUUJKQHzu8UXkBkc6efExFFOnD7K8fEhjp8aQlHjtEXa0J7SCAT9ON1ORFnE5Rbo6FQY/bDI8OQbDE8eY+TMmxRLr9JqhKJko9S2Vrn2YJnljVmu3PmEm39epXDsJfwBP80tXgRRMBM2RmGz2ekv5vnm98+5/ssKNx6uUHu0yldba6Ry7ViSWpTl27Ms1spM6SXmrk2if3+eQ6/l2R0Mks6myWgqalYlk8uQTLYzMNrHxVvTTF+eYKpa4uNLY+jfnSdlpJzIhln4epLpL8eofPs+8+unuXD7I/JH9hGJRgmE6u2ae7hd4fODvXzx2xL6/TmqD+ap/jSPfm+OhBrDYgy464UMT/d1s/dAF70Hu+k90E1rqMUMxKgqnoybaQuSYCbvbZGIZduIa2HiWhuJzjDh1G48XhGLcbLD6cRud2B3/INhYJqIArFEzGzbH/Rjd9qJpcIcGe5n4O06g+8U6Ht9Pz6/b3sPZek/PL7gjfXJ5FSCoRCFYp6NPy6bYdQe6SZGKB1a+86uXmPBDYLBEEOj/VRqH1BefY+ZKxOcXStx8eY50p3t9ZZ3QuNGNe1q4sXBvVz9dZGVH86h35tFvz+D/uMciUxs54YN3KKbQKSFZwrdPPtyj6nPHe5hTz6H5BP5C1+iK3G3Mn0vAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;4&quot;
+        title=&quot;4&quot;
+        src=&quot;/JPerformance/static/b41752231bc9ab43c5b782b6605d2a8c/26abe/4.png&quot;
+        srcset=&quot;/JPerformance/static/b41752231bc9ab43c5b782b6605d2a8c/c26ae/4.png 158w,
+/JPerformance/static/b41752231bc9ab43c5b782b6605d2a8c/26abe/4.png 251w&quot;
+        sizes=&quot;(max-width: 251px) 100vw, 251px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;h3&gt;Problems appear again&lt;/h3&gt;
+&lt;p&gt;This worked great but one day the web application was not responding customers, they couldn’t buy any  books we restarted the web application it helped for maybe a minute but then it became non-responsive again , well the web application looks healthy enough but we notice that the special offer service has stopped responding as  well okay that’s no big deal the special offers are in a separate page then just nice to have functionality but if the special offer service is not responding and it  shouldn’t cause the total web app point of failure.&lt;/p&gt;
+&lt;p&gt;Okay we continue digging the special offer service is calling a third service a purchase history service to show special offers tuned to the customer’s purchase history and this service has stopped responding as well we had encounter a cascading failure where the failure in this purchase history service had cascaded back to the web application a failure in one part of the system have affected other parts more critical parts if our system so if we compare this to the database case with a database failure affected the web application this is so much worse, because this service is not-critical and it´s stopping the entire system.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 389px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/9df8245a4e04a400e8fda11588261245/00a4e/5-6.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 52.53164556962025%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAALCAYAAAB/Ca1DAAAACXBIWXMAABJ0AAASdAHeZh94AAACRUlEQVQoz3WSa0sUURzG5yvk7OycObOzV529qBlW5gXU3BLMXQnEW7URYpSWL1RCtMTVWNaCDNeCFTKz8oIiRAjRmwhf1Mf6xczuRoi9+HE453/Oc57/RZGWxMXnYGBU9pbEa+i0dTdz816adKaPZLoT6ZcIn4GwJIZl0JVup/dWDzdGUrRcbUKR/wiUhA13dYSF0FjZeMLu5jyft59S/JInHq8mIHWCUmDHQxT3l9han2LvYJncuzkUwxQIKTDMkpAoi0UtSUTXePZmnK3iBEcbGdYOZknEIlRLQY00iMeCFPZn+bg2yvH+Q7Kb0yhW2E/QDmGFLDeVgE+S8EkilkQzdC52NHB9uJPkYCet3ZfdO7olXYRl0HStkbZUM22pFi601qOsv59nOT9JYS9Hd6qdoKriD/gw/CZeXWNycYy1gxyru8ssFGYIVQcRpsAsl8fj8aCqKlWqiub1ohwdZjnMjfDjJEf/g37C4QiJ8wnqG+qw4zb5nTk+/S6w+fMVxe8viNbabrMqNTf9JmagjF+ijD+/zVR2iKmVDFeSl4jGokTsiOtC07303u1ibHGY0YVBBh6lsII+jHLjKpMhrRJO7RVV83BO06jyePAKr/tjvC5Ooj7hiib7Osg8HuLOxAB9Iz1uvCLorKdRXMtl286MOYe61F2XsUSM/PY8O7/esn1SoHj8Eru2Bt1J2X9q3MooZ/3ijo+vlPLM6n0K37K8/rrA0odpQnYIXYr/O3TSOouSU0E4FiTRaLvU1IX/xhzOevcHuIlpBx9VJCkAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;problems&quot;
+        title=&quot;problems&quot;
+        src=&quot;/JPerformance/static/9df8245a4e04a400e8fda11588261245/00a4e/5-6.png&quot;
+        srcset=&quot;/JPerformance/static/9df8245a4e04a400e8fda11588261245/c26ae/5-6.png 158w,
+/JPerformance/static/9df8245a4e04a400e8fda11588261245/6bdcf/5-6.png 315w,
+/JPerformance/static/9df8245a4e04a400e8fda11588261245/00a4e/5-6.png 389w&quot;
+        sizes=&quot;(max-width: 389px) 100vw, 389px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;h3&gt;Debugging to find the error&lt;/h3&gt;
+&lt;p&gt;What happened when the purchase history survey stopped responding and affected all the rest of the system we sorted look at the web application because that is the component we want to save we’re on a standard web container for the web application contains a &lt;strong&gt;thread pool&lt;/strong&gt; with a fixed number of threads the &lt;strong&gt;blue boxes&lt;/strong&gt; on this imagery illustrates the threads and when the user wants to use a page a request comes in it is assigned one of the threads from the thread pool.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 111px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/8642237f51af0ef9f4d66979882e35ad/a4766/7.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 213.51351351351352%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,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&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;seven&quot;
+        title=&quot;seven&quot;
+        src=&quot;/JPerformance/static/8642237f51af0ef9f4d66979882e35ad/a4766/7.png&quot;
+        srcset=&quot;/JPerformance/static/8642237f51af0ef9f4d66979882e35ad/a4766/7.png 111w&quot;
+        sizes=&quot;(max-width: 111px) 100vw, 111px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;The thread in turn calls the special offer service we want to view that page makes a synchronous call and wasteful response.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 364px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/43daff38c24a6d7a56279cc18cdb969e/e45a9/8.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 64.55696202531645%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAANCAYAAACpUE5eAAAACXBIWXMAABJ0AAASdAHeZh94AAACY0lEQVQ4y32SW08TURSF+xMotHOfTjtQegEBoxAlmgjBF8XEByXGN/DJ6INK0ASDEAQsAQkqpYU2CFourVVAIBJjYjQxmpAY8fYPeOM/fGamlFuEh3XOZM7e66yz9nLImoziUVB0BftbV7YhqSJ3+q4zmOomMtlBV/QumldDVvfW7YbDWgRJRFSkfWQSuk/j0fP7PJuP8PRNhPjSIGbAh6iIBxNajeGqACUhE0EWd1Rau08lHm/nW+YJXzPDpF8NYAR8SFuX52tVj7oFW6FMdLmDW73NyLKCUWzY6iRZRPAqzI094Fc8wo9oH+9eP0YrNewzi8B+nSzicrtwCS7cojun8NyVOmobqvGaPsoryyirKKM04Efze5ge7+R3KsafVIzl+WHMcj+KlrNEkAXCR4OcrK/hxJnjHKutynnoLCzCJbiRNMn2UvfqFPuL7eJYop/syjqzi99JLySorKkgGA4RPhImVB6ic7SViffDRBcjJFeHcFg+qEbu/XljrX+iLCF6BEbGI6RW/jL19icvs1H0EtWesmEaeHw6vdNtjH/oZyDbwczaiEW4l2h7YqqCbCok4l18yS7zaW6BTGYII+i1h5K7VORs02mu3r7I5ZuNNN24kFO4HzlCGcFUmRltY3Oqn41ED0vpHrSAF3lXxIqKXBQUOHE6C+3dcVCe8oTT0VY2JyNsJB/yNt2NFvBtE+bt0nbhUIWiqZAcucf6iynWJpJkZnvQglZsdgj347+ENhQZ0SsRG2vn89IqHxdWmMlG0Ep1O4cH9dk5PAiCItLQWE3LtXqaW+o4f+kUkiZzWM8/K4a3Ndq8dg0AAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;eight&quot;
+        title=&quot;eight&quot;
+        src=&quot;/JPerformance/static/43daff38c24a6d7a56279cc18cdb969e/e45a9/8.png&quot;
+        srcset=&quot;/JPerformance/static/43daff38c24a6d7a56279cc18cdb969e/c26ae/8.png 158w,
+/JPerformance/static/43daff38c24a6d7a56279cc18cdb969e/6bdcf/8.png 315w,
+/JPerformance/static/43daff38c24a6d7a56279cc18cdb969e/e45a9/8.png 364w&quot;
+        sizes=&quot;(max-width: 364px) 100vw, 364px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;When all is ok the service returns the user gets its response rate but when the service is not responding then the thread will wait for reply and while waiting for the reply it will be blocked it can’t handle any other requests.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 351px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/4bdacc05ce661fb5828ad6cfb3171535/7c2a6/9.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 65.18987341772153%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAANCAYAAACpUE5eAAAACXBIWXMAABJ0AAASdAHeZh94AAACgklEQVQ4y32S20sUYRiH9w/o4H4zs7vzfTOrGxTaAQKJzsWueSgoHSOiG2sRPBSVFAWl5u4WdZEapHmqi9QLTTqp1GZkRnWREEHiRdRFdd//8MTM7tpB6+K5et953u+d3+tTlomyJKYtkZaJtE1UWOHXBMdb4gxOd3N9OMHwTA87y7aj6ZpXl5ZE2ovx+W2JbmekmaaMUDM0mq7U0z/ZTudIirsvuiivLsEvBCr/P8KYMtlkZaRmFiusWKkLLqXqmb/fzYfBDmbTfZQ6MU9o5StMbxvpDc/hCaeCITqU2yCJ5KaGFct0weUrjXwe6+Vt11Xmnt2mtDq6IHT7QjKE0DWEJjwCZhBfuTLZYklv5UJLUuQSVhiGxuVkHV+7Esy1nuLj6HVKqmPkeStbBFSIVYWriFXuJuZE2VMVY93Gol//0F01aJteMJGwwjJ0Eq21zDbU86zC4eW1czhOlIgQrI/YWELg1FRwb6qTgZ7zPJjuprE5ji+XssxiZldervu5mDrBw1ef6E9/ZXImzd7KbQhNoyBio/yCg7UVjEwkudN8iNdPz9GQjOOTCzJzITk3lDxD0JKsY/bxBOnBR7x+OsQeZwd+oWEVWOihIGs3FXL49H6O1JVR07SfzbFifG5avyNzKRsabYk4P0Y7+d6bZH7yBlFnFyJ3NrYkaAa9AX5dJ09oGMEAvsW3lBGuMERGONLOt1sJ5ic6skLNEy6cTX7mZLzkw3LxC10yLxQ0tx3ly+gA7/u6eTd+k6iz4w/hUiwpVLZkpe7nQuoYb548Z3xsmumpIUqqtnorqrD8tzCkQvyNW9ACBrvKizlztpKmk/uoP32ANRtWEwgGvPpS37n8BOc+tfHyL5dPAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;nine&quot;
+        title=&quot;nine&quot;
+        src=&quot;/JPerformance/static/4bdacc05ce661fb5828ad6cfb3171535/7c2a6/9.png&quot;
+        srcset=&quot;/JPerformance/static/4bdacc05ce661fb5828ad6cfb3171535/c26ae/9.png 158w,
+/JPerformance/static/4bdacc05ce661fb5828ad6cfb3171535/6bdcf/9.png 315w,
+/JPerformance/static/4bdacc05ce661fb5828ad6cfb3171535/7c2a6/9.png 351w&quot;
+        sizes=&quot;(max-width: 351px) 100vw, 351px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;While waiting for the reply it will be blocked it can’t handle any other requests okay so for no big deal where one blocked thread the other threads can still be used for other stuff our users can still browse products and make payments so they don’t notice anything yet but as more and more requests to the special offers page come in more and more threads will be blocked until eventually all threads will be blocked.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 403px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/bf19c70471e15d0b59cb26e0ec0ced3b/045fd/10.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 56.32911392405063%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAALCAYAAAB/Ca1DAAAACXBIWXMAABJ0AAASdAHeZh94AAACf0lEQVQoz2WSW0tUURiG5wcU5sx2t9dae83oSHkgy1PSUSwwpAxKyzFNTDE0xFOncUazwlLDI53GJKduJuyiNG/CuowoqK6Kki668Kp+xRN7zxRhFw9rwfp41/u93+fxaYmDsAXSlkgtUX6F1/DRHm1m9uUUM4tjDM9F3Te3Tsu/d8M08Pq8LqYw8ZwXgm6VFDW1wEoJ+kyDrnAzyy+mWXo2yXgsggrYCCUQWmJpgbAlpfuLKa/eT/nhcvJ25OI5Jyw+WoJeJcm1JVvspOAG08dApIXVxG0+z08SnxvCDCjXVUBLcqRFSbafu0+v8eRRlOWVKdojzXjSbUGbFDQpSZktqVKSSq0oyDC42n+Gbw9v8TU2Qvx+hKyAYpsSlNqKYinYGfQzdLeDqeshFuKtNHQdx+Nkka4lXi3Y7PxuS7ZrRZmZwY2+Bj4dPcT7ir3MRlsoyvJTKAW5jkPb6UhQeaKCUGcNoc5aSvYW4pG2QKWQbjYSyy/ZaGXQ31vPh/JdvC0sIHa5iZygH1sJMrVkqxL4g5rxxBDxVzMk3tyj7dJpR1C60xXumRS1/YpNpkH/xQZ+3LzA6kAnsYlujCybTCXIdz5VAh3UXJnvZnJpkDsr12nsqcHjhPwvfwTTTB+RcCO/nt9nLTHNg9nLBAKKvNSURWptdleWUlV30CW/KDeZ4Xr+Orx0ip+JCdbmR5mf6WFLasruDqZaHrzTx/TCMPcWx2joqP3foYPSkjTTIHqxju9nT/IlVM3scAubgxohrWTW0iKQrRldCBN7PcLjd5O0huvxWMpiPU6W3gyD6pp9TAw0Mh4+RXP7EUxlIdbVlh0souLYHg4c30NeUQ6/AT6of9GLLGUEAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;ten&quot;
+        title=&quot;ten&quot;
+        src=&quot;/JPerformance/static/bf19c70471e15d0b59cb26e0ec0ced3b/045fd/10.png&quot;
+        srcset=&quot;/JPerformance/static/bf19c70471e15d0b59cb26e0ec0ced3b/c26ae/10.png 158w,
+/JPerformance/static/bf19c70471e15d0b59cb26e0ec0ced3b/6bdcf/10.png 315w,
+/JPerformance/static/bf19c70471e15d0b59cb26e0ec0ced3b/045fd/10.png 403w&quot;
+        sizes=&quot;(max-width: 403px) 100vw, 403px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;When all the threads are blocked when additional threads come in they are in queued and this is a really bad situation because even if our service would be would recover and the threads would be unblocked we still have to handle all the queued requests so we really want to avoid in queueing requests okay now we understand what’s happening on quite a low level in our application but the question is why.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 404px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/c7ebac1e1b9da8379394e08802cfdb9d/494f9/11.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 57.59493670886076%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAMCAYAAABiDJ37AAAACXBIWXMAABJ0AAASdAHeZh94AAADDElEQVQoz02T7W9TZRjGz2cTXXt6enbe+37arpSutpx1hm5YFsogAwWzle5FrFMYI0qjMegI0imbE4cLo0DUEBaiElEa0Gj0gyC4xBg0fpNEv6jx7/iZc0Tihyv38zy5X64r9/UIiq6gmRqqoXpRt3QkOUjp8SIvnTzE4blnmT3WIJaM0q11ezmaqd6PGnpI92rc6N6FUMRCVuUHCUbIoMvvY9/BPVz+/gIrnbe4fPsChf48kix5xR4BU0VWZPyiiBhw4cclJ8wcPEAkHvGmuw+6pdEl+qk9M8Ktq6e5ubbE9c+WyfXnCMpBj52rRtEUNpULPH90ksbLU0wdmSCeiiLMH3+difFx0pk0yXSScCzMw74upqZ389un5/lxdYEfbrTJ9me9huFYCLvHxrZtpppjdG4scmVllus3l3EqDkKh1EfeKRJPJugtPIpTckim0jw3O8q9c/P8Mtfk9odLFCsOsViUbG+WDbkNJGyb7bUKrZVpll4bYam9n3Qxg7ASlNityAR1BctQMWMhlHCYxgtj/FzfxR07yecnZiiPVEgk4iRSCU9FNB6lty/LZLPGeLPO6IG9RBJhhOO6RtXUMQ2NHkPDMTUqXT7mntzC3doI66k0X7QO4VQ3oyjd3lLstI0UDLKnsZOrd9/j0rfv8tF6G2eggPCmqjJsaF7DlKGRsQxsUWRmosrvZ47x69HD3FprkenPIstBkj02VsREDASojg3yTmeO1lqTkx+/Qm8pi3BGVdmr63QbGrqhooZ0HhJFRqd38ndnlT8vnmL92ik2bs4RiUYww+aDLcfSEbY+MeBhYMdjGGEDwWdqSK4V7vvQDOn4RJF9jWH+urLMH+fe4M4ni2za2oeiKJ5tXBOLUoAdtSHe/2qZ1WsLnO0ski/lEFxWmvGvt1wYls4jfj/16WHuHZnkp6FBvj79ItnBPJIUQLM0z6uu5F1Pb+OD795m9ct5zn+zQLGcR3DN/H+4DERJolwt0p7fT/vVOq0Tk0QzMe9n/DfYPdsb42yvb2FbbZChp8pYUZN/ADDGqTwGK+DzAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;Eleven&quot;
+        title=&quot;Eleven&quot;
+        src=&quot;/JPerformance/static/c7ebac1e1b9da8379394e08802cfdb9d/494f9/11.png&quot;
+        srcset=&quot;/JPerformance/static/c7ebac1e1b9da8379394e08802cfdb9d/c26ae/11.png 158w,
+/JPerformance/static/c7ebac1e1b9da8379394e08802cfdb9d/6bdcf/11.png 315w,
+/JPerformance/static/c7ebac1e1b9da8379394e08802cfdb9d/494f9/11.png 404w&quot;
+        sizes=&quot;(max-width: 404px) 100vw, 404px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;The code that calls the services looks something like this in this case we create the URL to the special offer service we create a URL connection we open that connection connect it get an input stream and read the response from that stream , but what &lt;strong&gt;why&lt;/strong&gt; doesn’t this return, well we realize that connect and read time outs in Java they are typically infinite this will block for an infinite amount of time. &lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 630px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/68f40039b249e9fd80a6af6d255d770f/47ff6/12.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 20.253164556962027%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAECAYAAACOXx+WAAAACXBIWXMAABJ0AAASdAHeZh94AAAA10lEQVQY00WPPXaDMBgEuYZtwAaB/j6EhCCI5yLx/S81eZAixTRb7O5UMQWUcTyVwjrNFCbmGNHWoq1BjQPGWYw1eBFGPeLF4bzDOMOgB0Yzoo2mUx3VthfSujPnjbyupJyRfGDnFeUj3aDotUVCYNsyaUnEFC/CHGieDffmTvtqqNuaSpadfHwTv96kbaeUws/nQzkKThyPtqEeNC/taAeDdpZpEvzkkSAX59Oz9FbfqET8tRxjYF0zOWdSSteTZUmXvpGZuu9pesVo9J+i/dc9s7p9XIW/GM522I9u+HMAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;twelve&quot;
+        title=&quot;twelve&quot;
+        src=&quot;/JPerformance/static/68f40039b249e9fd80a6af6d255d770f/f058b/12.png&quot;
+        srcset=&quot;/JPerformance/static/68f40039b249e9fd80a6af6d255d770f/c26ae/12.png 158w,
+/JPerformance/static/68f40039b249e9fd80a6af6d255d770f/6bdcf/12.png 315w,
+/JPerformance/static/68f40039b249e9fd80a6af6d255d770f/f058b/12.png 630w,
+/JPerformance/static/68f40039b249e9fd80a6af6d255d770f/47ff6/12.png 852w&quot;
+        sizes=&quot;(max-width: 630px) 100vw, 630px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;h3&gt;Stability pattern&lt;/h3&gt;
+&lt;p&gt;If the service never responds this made us realize the first stability pattern use timeouts, timeouts prevents blocked threads we first are timed out of course I timed out our threads can do other stuff in this particular case we could set the connect timeout.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 421px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/ca79447b29e64f5072c705fae357d272/092ed/13.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 26.58227848101266%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAFCAYAAABFA8wzAAAACXBIWXMAABJ0AAASdAHeZh94AAABB0lEQVQY0y2QWXKDMBQEuUNssxiDWYQWhMRiIDip3P9WnULJR9d8vak3HY2T57VtKOvprWHdXwzjTO9n9DAipERqg7aWafaM84ibHNMyBaTuqEVN0zW0siWq+xZzOPRuUatFLIa7UxTzQDmdaHInqfYBszl0r1G9QhoZsqxKkntCmqeBKG4LkkmQuJbY1uS+odg7iqUl9U8S/yRbKhKTc8uuXOMLH/GFyz+39EacxaEse2REsrcsxw/DvDKun6zbi/f3m+PrwI2O8lnwqAXPzlC0kkYp+sFg/lFGhSzr8u/Dc/vpYvA2cDqyzmK9xc8+TNPOU4qOvKqphAjehBKB877THWVVhMJfsg2Rt99DtlYAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;thirteen&quot;
+        title=&quot;thirteen&quot;
+        src=&quot;/JPerformance/static/ca79447b29e64f5072c705fae357d272/092ed/13.png&quot;
+        srcset=&quot;/JPerformance/static/ca79447b29e64f5072c705fae357d272/c26ae/13.png 158w,
+/JPerformance/static/ca79447b29e64f5072c705fae357d272/6bdcf/13.png 315w,
+/JPerformance/static/ca79447b29e64f5072c705fae357d272/092ed/13.png 421w&quot;
+        sizes=&quot;(max-width: 421px) 100vw, 421px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Great we introduced timeout at Acme books, timeout for all the service calls things work great for a couple of months perhaps some services that became slow and didn’t respond but the timeouts saved the rest of the system but one day we had to fire again, customers complaining going to buy books had terrible response times, now web application we’re awful throughput okay what’s up now have what we solve these kind of errors where the web application would be slow let’s investigate what’s happening.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 427px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/220a1f3d6ab4ce6adcd0d0fa30740cf9/a7c74/16.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 54.43037974683544%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAALCAYAAAB/Ca1DAAAACXBIWXMAABJ0AAASdAHeZh94AAACMUlEQVQoz42TTU8TURSG+wcISTszd+58dDotSD9sCzMFjaElKmCMccnChLgwQWFDorJhIRsjaABFjPELohEMIFAhwagk6pLQhSbq3oUrf8VjOhVBYeHiybmLk/e+5573hgzbQFqSag2IGmi6RsZL8uTtFJOLN5jdnKat6BNRFcyoudt7ACHdkkjLoFYl5o6gn+LZ2gQL67eZe32HQtH7P8FMwuRd/xG6/QYUQw8cKppG2k9RWb3H10fjbJWnKXT4KPsE5X7BeMzgclcaP+XQ4JpkGqM4lk6uLU3l5RTf7o9SKU/jdXhEFAUZNdEtA/F7oipCCoQhgnMwcp0mUKvubIntmLiWTuuxLNvPR/g+MUBlfoSOzgJxS+A6Bo6tk3AtLNvAcizi6QbiqURwDlVtWtGa3Z3lRIQg6yVYXl9lrvyFVxvLtJZyqEqYo615Ci0ZEjETR6pcHDrH3cfDTM1c48KVXkK7G5YYf5YiyPiNvF+dYWu+zMe1GVqKOWKuy8lTnRzvOkEqm6auvp6r430sPR3i3cIgw5P9NcG9BLERGkm/ic+LY/x8eJ1PK7fIl/LEYjHyXp5UJklTuilIQ3N7lu6eIqd72vHac4SkLdlLTVCQ9BupvBjlx4Mxtpduki81E46Eg8fXpBbU6mTVy8OKEqAK7QCHtkQVgrQX5836LB9WNtncmKWldBhFUYPY/N1f+wxmdCfYps6/VGNguSa9fWcYGOzh/KWzxA45wYgH9e/lF1FTaEsNKOjqAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;fourteen&quot;
+        title=&quot;fourteen&quot;
+        src=&quot;/JPerformance/static/220a1f3d6ab4ce6adcd0d0fa30740cf9/a7c74/16.png&quot;
+        srcset=&quot;/JPerformance/static/220a1f3d6ab4ce6adcd0d0fa30740cf9/c26ae/16.png 158w,
+/JPerformance/static/220a1f3d6ab4ce6adcd0d0fa30740cf9/6bdcf/16.png 315w,
+/JPerformance/static/220a1f3d6ab4ce6adcd0d0fa30740cf9/a7c74/16.png 427w&quot;
+        sizes=&quot;(max-width: 427px) 100vw, 427px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Thee timeouts seem to be  working well but we notice that the service is called a lot more often that then it usually is, there are a lot of timeouts in fact there are so many timeouts, that it seems that our threads spend most of the time waiting for these timeouts they don’t do much other work at all  so our throughput will  go down , we get a throughput that is lower than the number of incoming requests so say that we have a throughput that  can handle 30 requests per second we have 40 requests per second in coming to the to the web application we can keep up with the load and this will cause requests to being queued .&lt;/p&gt;
+&lt;h3&gt;Bulkheads&lt;/h3&gt;
+&lt;p&gt;The pattern isolates components from each others to prevent Falls in one component to affect others,  then prevent cascading failures an example of a bulkhead would be to limit the memory usage the allowed memory usage of a process so if it would show a memory leak then it would be allowed to just use up a certain limit and would not eat up all the memory on the machine.&lt;/p&gt;
+&lt;p&gt;Limit the number of concurrent calls to a service limit the number of calls from one service to another this will put an upper bound on the number of waiting threads so I will talk about this a bit here if we if we have the web application and the special offer service we can add the bulkhead of size say 2 in front of this service between web application and the special offer service but only this we are saying we will allow at most two requests concurrently from the web application.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 310px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/d640507c1ec1adeb1607a367354b8c01/5fad2/17.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 77.21518987341771%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAPCAYAAADkmO9VAAAACXBIWXMAABJ0AAASdAHeZh94AAADPklEQVQ4y4WU3W/aZRiG+ydYvr8ZMdLGaJbogYkHPfFwdXXJ3FqLdG3XGWOia/qBa9lKaaFAYR0wVuDHoECgsEIHWW1ThK5dt6ZxiZsxatREjzwx/g+XASqd2ujBnedN3uTKcz/3875tKp0KqULG6bdeY3isn6HRfj76fKClKxYzH08PcmG4B+0pDQq1EpVWhVLTrP9Um1JTv1Rgj0ySroXw5xxk9pa5dyg0lD8UyB1EKD1Lcn6wB5FYhFqvPhHWAMpVcl7uNDAXu8bNew58+Tm8q7PEtpdI1IIkdoLEq35yhwJXJgcQicWodf8BVKgUaI160mk7z0shnhYCHJSDpHaDxGt+ols+IhseMvshBkf7EEn+B6hUKdB06FiL2/g27GHfN8tXd92kdgMIlZu4klYciSmC9x2YP7uAWCo5Bmr+rSbQqKOQmOHnuIengRm+zy8R37lF/KGfQNmJP20lVvEyNNH/N8v1WWr06lZtWdYZtaTjDh4VvqCS32B3LU1iZ5FYzYdwEOTB0qcUtj1csphawHrKdfsvtbfTfiSZUl4HKtEbNcQSblKlrwkXnlEsllmpuRFqPqJ7S+SS18jv+Lg08QHiF2b4Tk8X54be5az5DO+Zu3n9jVePgZH4AunScyLFbygUysSrTqJVD5GHiyRzVjK7XgbGexFLJI3uDMZThB+4SGVuELlrpbgfwfTJ+02gtkNLMjbDQXaNSiLHXlZAqDmJVBe488THunuE3OYcH1r6mkC1EkOngeiGnej8EKvWs+xVp+i92nuccl6w8EfCxa8hGz+mnEQaQCd3nngpuS6T27QfAcUNuxqDhhF7H+OLZiz2i9hCI3R1v90Eqjt0rAqT/Lbi5aewg+/SCyzX5lmuznP7sYf7nstktmyYJi8iroeib4YikUkbQUhUSsRyGTKF7AjYqScbHuN3YZZfgtP8sGIjULU3FKzNsVyeJvbIgWnsfMNya23+qo3zCy9F/YqKmGBlK/sla8kKm+kEt7enuFW5gb9yHd/2daKHTkyj5xCJxNQ/lHqHJ6lNVd8nuYSR4W6yCQ8rgptkfAZXcQzn+jjO4jgL6xPMZq/yZtdpJFIpSq0ShVpxov4EZ31zL3hvjdkAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;eight&quot;
+        title=&quot;eight&quot;
+        src=&quot;/JPerformance/static/d640507c1ec1adeb1607a367354b8c01/5fad2/17.png&quot;
+        srcset=&quot;/JPerformance/static/d640507c1ec1adeb1607a367354b8c01/c26ae/17.png 158w,
+/JPerformance/static/d640507c1ec1adeb1607a367354b8c01/5fad2/17.png 310w&quot;
+        sizes=&quot;(max-width: 310px) 100vw, 310px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;We have a bulkhead or two of size two to the special offers service a bulkhead of size four to the product service and about eight of size three to the payment service from the web application and this way in this case we have an upper bound of totally nine waiting threads in the web application we’ll never have more than nine waiting threads do to slow services and this offers great protection against cascading failures our services can behave basically however they want and we are quite well protected but only if our bulkhead sizes are significantly smaller than they request pool size if you have a bulkhead when calling a service that is of size 40 and we only have 50 request threads in our application then we can still block up most of the threads and get bad performance so meter size our pollock heads small we can reason about bulkhead sizes by looking at the peak load when our system is healthy so let’s assume we have 40 requests per second to service and these requests are handled at 0.1 second so this would be a peak load when calling service we have this scenario a suitable bulkhead size would be to multiply these multiply the for two requests per second with the response time of 0.1 seconds and we lead us to a bulking size of four so that would work if we would had a constant load.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 394px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/c5efcdf7a551ced1e170e27276723bea/cc097/18.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 45.56962025316456%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAJCAYAAAAywQxIAAAACXBIWXMAABJ0AAASdAHeZh94AAAB+0lEQVQoz22R3UuTYRiH37+gg+39fjc3XFNbHYiMV+dyY8OPRXOZomga5Oso54RZzq0Pp2V+JQ3MVpqLoIPIjiIp6IsOOquD/qUr9haxxIMLHp7nvn/c1/0IulunHsOtoxoqsibj8rhY2S+w936L5x/LZJcsugIJAoHTeH0efE0+Sk9u/Hn/VGamZCEcDXS4VDyNHswOEzNksv32Ltvv7rH/7QHFnSxT0TzxaDdBs43Osx1svL7Fo8MVnn3dJF/OIEiKjKIpOFQZv6aQ854k2NFOc6AZURaJpkKkJnu5YPVixttwyA5UQ7EtFF0hfjFMyupjIN1HqCeIML8+zfLjeVarRUbTwxRiTYTMM/hPtdDU4idbslir3mbjxSJj14aoDWA0GP+MREnC4XTaSLKEsPd5k6cf1jn4WWFuLcfcgo6VTtCfGuJcMsHO4X1e/ajw5tcui5XrOCWxLlCzz4bnLw06wlguRXpplMzqBImRGD0jswRaW5E1yVZKTnYzURjkcnGQ+EAYWVU4uvd6BFmV7aLavlSXm87+K/QkeglHOvE2ekmNJ5jKj5NemCB+PkKtvtaoubRjEf6/UBHFE7ZKsD1IJNZF+WCZ6peHvPy+Q35rBqcoork1+1OOQ1B1lXpqwTVVURHRDI2ry5e4uZvhTnWW4emkHWg368fzG2LbNgJEfQIfAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;sixteen&quot;
+        title=&quot;sixteen&quot;
+        src=&quot;/JPerformance/static/c5efcdf7a551ced1e170e27276723bea/cc097/18.png&quot;
+        srcset=&quot;/JPerformance/static/c5efcdf7a551ced1e170e27276723bea/c26ae/18.png 158w,
+/JPerformance/static/c5efcdf7a551ced1e170e27276723bea/6bdcf/18.png 315w,
+/JPerformance/static/c5efcdf7a551ced1e170e27276723bea/cc097/18.png 394w&quot;
+        sizes=&quot;(max-width: 394px) 100vw, 394px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;When using thread pool handovers if we have a fixed number of threads and we don’t NQ requests then we get an included bulkhead if we try to call the service when water they have three outstanding service calls then we will fail immediately with an error so this is great we get generic timeouts and bulkheads with the same construct a straightforward way to implement thread pool handovers is to use a standard java thread pool executors here we neutralize it with three three threads the first two threes or the number of threads and we use a synchronous queue now this is important because if you don’t specify the queue to use request will use an unbounded you assume Chris queue will prevent requests from being and queued and we will instead react executions when all the threads are used and when we want to protect our get offers call using this thread pool handover we submit the call to the executor we will get a future in the return wait for this future with our desired timeout in this case one second if we get a rejected execution exception when submitting our job it means that we already have three outstanding calls.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 423px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/f575a15047835427430c869e5b3ffb26/f687d/20.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 51.89873417721519%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAKCAYAAAC0VX7mAAAACXBIWXMAABJ0AAASdAHeZh94AAABpklEQVQoz22SaY6jMBCFOUUIAYclrAbb2GAD3eme+5/qjaoSpIk0Pz5VyeBXy3NUNRXUrLB/7cziHfweMIcDnbZo5QA5dzDrhMlJrF+WsX6G31Zoq1HVFUiHiG7ihizP0PQN+rFH3dWYzIRRSTzaCm3foGgE8kZAPFLkTYa8zXB/CBYQRYZrekWSJUzUyQ7hCC8RPUKqkePsDFcf1IhH2yDJbkjSBFfilrzzlxA1dRLRISXDNEAqiXZoOR+URFmX6MoUshYQefoSEK9O4jTGeffsjgXPg/gWo2pKSGOh3AY1rzCzwe/zgHcGPqxwq8MaVhhrYJzBdmw8DU1XPAouEJ3KVV3CLrRsh0nVMDKHWwb4b49ed9DrhP1ngw0aZtF4/nlygfSesgcUeYenIJniNw8XLEyYoL3C8m1fQk8PtxmYoOB2A7MoLj6MPUQhPnYZncuk3dEIzltoL6GDhNs17KE4LmHB4hf0sud/CXoV9/L+YQx3SO3Sh27o2JBWtkwnW/RTz2aNWr5fgWQhNm4a+N7HsznnJ/VLcnkTv7n8FzKQoJzE/uUvrSofcvy01EsAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;ten&quot;
+        title=&quot;ten&quot;
+        src=&quot;/JPerformance/static/f575a15047835427430c869e5b3ffb26/f687d/20.png&quot;
+        srcset=&quot;/JPerformance/static/f575a15047835427430c869e5b3ffb26/c26ae/20.png 158w,
+/JPerformance/static/f575a15047835427430c869e5b3ffb26/6bdcf/20.png 315w,
+/JPerformance/static/f575a15047835427430c869e5b3ffb26/f687d/20.png 423w&quot;
+        sizes=&quot;(max-width: 423px) 100vw, 423px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;h3&gt;&lt;/h3&gt;
+&lt;h3&gt;Monitoring and troubleshooting&lt;/h3&gt;
+&lt;p&gt;We probably need to throw in some monitoring here to be able to get a better understanding of our system but what should we monitor yeah of course obvious stuff like heaps , CPU utilization, but what is specific for a microservices architecture , we discovered that a great place to introduce monitoring is to monitor the service calls we have a lot of services to get a good understanding of them we can monitor how they are called this our integration points these are the places were integrating the system with with itself it’s also a good place to detect configuration problems if we protect all our service course with these stability patterns so we need to monitor that we have configured these patterns correctly a crucial thing to measure is the timeout rate the rate at which calls to service or timing out that’s a good problem detector and it is also a good place to validate.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 411px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/JPerformance/static/b397e1a97c84d164cb7de0d11a5ddb29/2a432/21.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 34.810126582278485%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAHCAYAAAAIy204AAAACXBIWXMAABJ0AAASdAHeZh94AAABEklEQVQoz32RaW6DMBBGfYgkEHYoSoA2C2ULiyFFJGmk3v86XzWjUjmp1B9PHuzHeDwj9scd+nOP4lSirEvkVY6iKrC21jBs4xfd1HFI95CDRNPV7BFVU+H4fkDd1kizFMJ2LSS7hIleI2yTLaIk+pOQvr0Xjx1yyYvf4od4E28gSF5oC6zWK0YzNIYSzEnVdakvGdVXY0El37/u6D8GNLKFHDp0fQd5lsjLjCXTNngtqhyX24RhHNDKBsWpYI+wXIsvFKZjIggDOL4D27MZOnR+YrU62g9CH37ow/Vd/oegVsyOmDdJfkjoO6DL1F5STJXSgJ6ZPUGTun5ekZUZuqHDeBn5KdNt4gFQArWP/0EVfgN/EceixBMUSgAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;Eighteen&quot;
+        title=&quot;Eighteen&quot;
+        src=&quot;/JPerformance/static/b397e1a97c84d164cb7de0d11a5ddb29/2a432/21.png&quot;
+        srcset=&quot;/JPerformance/static/b397e1a97c84d164cb7de0d11a5ddb29/c26ae/21.png 158w,
+/JPerformance/static/b397e1a97c84d164cb7de0d11a5ddb29/6bdcf/21.png 315w,
+/JPerformance/static/b397e1a97c84d164cb7de0d11a5ddb29/2a432/21.png 411w&quot;
+        sizes=&quot;(max-width: 411px) 100vw, 411px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;The developers over at Netflix has made some awesome stuff for example , hystrix implements these patterns it implements circuit breakers red pool handovers bulkheads it’s actually quite great.&lt;/p&gt;
+&lt;p&gt;Well maybe in 2022 some Netflix libraries are in maintenance mode now, but there are another options such as some pivotal’s libraries and another frameworks such as Micronaut.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Java Memory Model]]></title><description><![CDATA[It is important to understand the Java memory model if you want to design efficiently low latency systems. The Internal Java Memory Model…]]></description><link>https://github.com/BrahianVT/java-memory-model/</link><guid isPermaLink="false">https://github.com/BrahianVT/java-memory-model/</guid><pubDate>Wed, 14 Jul 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;It is important to understand the Java memory model if you want to design efficiently low latency systems.&lt;/p&gt;
 &lt;h2&gt;The Internal Java Memory Model&lt;/h2&gt;
 &lt;p&gt;The Java memory model used internally in the JVM divides memory between thread stacks and the heap. Each thread running
 in the java virtual machine has its own thread stack. The thread stack contains all local variables for each method being
