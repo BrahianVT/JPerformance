@@ -111,8 +111,3 @@ We probably need to throw in some monitoring here to be able to get a better und
 The developers over at Netflix has made some awesome stuff for example , hystrix implements these patterns it implements circuit breakers red pool handovers bulkheads it's actually quite great.
 
 Well maybe in 2022 some Netflix libraries are in maintenance mode now, but there are another options such as some pivotal's libraries and another frameworks such as Micronaut.
-
-Video     
-
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/pKO33eMwXRs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
