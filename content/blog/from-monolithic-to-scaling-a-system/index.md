@@ -93,11 +93,12 @@ We have a bulkhead or two of size two to the special offers service a bulkhead o
 
 ![sixteen](18.png "sixteen")
 
-Seventeen
 
-![ten](20.png "ten")
 
 When using thread pool handovers if we have a fixed number of threads and we don't NQ requests then we get an included bulkhead if we try to call the service when water they have three outstanding service calls then we will fail immediately with an error so this is great we get generic timeouts and bulkheads with the same construct a straightforward way to implement thread pool handovers is to use a standard java thread pool executors here we neutralize it with three three threads the first two threes or the number of threads and we use a synchronous queue now this is important because if you don't specify the queue to use request will use an unbounded you assume Chris queue will prevent requests from being and queued and we will instead react executions when all the threads are used and when we want to protect our get offers call using this thread pool handover we submit the call to the executor we will get a future in the return wait for this future with our desired timeout in this case one second if we get a rejected execution exception when submitting our job it means that we already have three outstanding calls.
+
+![ten](20.png "ten")   
+
 
 ###   
 
@@ -110,3 +111,8 @@ We probably need to throw in some monitoring here to be able to get a better und
 The developers over at Netflix has made some awesome stuff for example , hystrix implements these patterns it implements circuit breakers red pool handovers bulkheads it's actually quite great.
 
 Well maybe in 2022 some Netflix libraries are in maintenance mode now, but there are another options such as some pivotal's libraries and another frameworks such as Micronaut.
+
+Video     
+
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/pKO33eMwXRs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
